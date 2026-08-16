@@ -1,216 +1,126 @@
-![platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Windows%20%7C%20MacOS%20%7C%20Linux-brightgreen)
-![last-commit](https://img.shields.io/github/last-commit/jiangtian616/JHenTai)
-[![downloads](https://img.shields.io/github/downloads/jiangtian616/JHenTai/total)](https://github.com/jiangtian616/JHenTai/releases)
-[![downloads](https://img.shields.io/github/downloads/jiangtian616/JHenTai/latest/total)](https://github.com/jiangtian616/JHenTai/releases)
-![star](https://img.shields.io/github/stars/jiangtian616/JHenTai)
-[![issue](https://img.shields.io/badge/chat-issue-brightgreen)](https://github.com/jiangtian616/JHenTai/issues/new)
-[![telegram](https://img.shields.io/badge/chat-telegram(Chinese_Mainly)-brightgreen)](https://t.me/+PindoE9yvIpmOWI9)
+# JHenTai Image Translation
 
-# JHenTai
+> 在 JHenTai 阅读器中直接完成漫画文字检测、日文 OCR、机器翻译、原文擦除和中文嵌字。
 
-English | [简体中文](https://github.com/jiangtian616/JHenTai/blob/master/README_cn.md) | [한국어](https://github.com/jiangtian616/JHenTai/blob/master/README_kr.md)
+[![Windows](https://img.shields.io/badge/Windows-x64-0078D4?logo=windows)](https://github.com/Riderich/JHenTai-Image-Translation/releases)
+[![Release](https://img.shields.io/github/v/release/Riderich/JHenTai-Image-Translation?include_prereleases)](https://github.com/Riderich/JHenTai-Image-Translation/releases)
+[![License](https://img.shields.io/badge/License-Apache--2.0-blue)](LICENSE)
 
-[Q&A](https://github.com/jiangtian616/JHenTai/wiki/Common-Questions)
+## 项目简介
 
-## Description
+这是一个基于 [JHenTai](https://github.com/jiangtian616/JHenTai) 开发的实验性漫画图片翻译版本。项目把完整翻译流程接入阅读界面，目标是让用户找到日文漫画后，直接在软件内生成并阅读中文译图。
 
-A manga app for E-Hentai, supporting Android & iOS & Windows & MacOS & Linux.
+当前重点维护 **Windows x64 测试版**。安卓独立版仍在规划中；现阶段的 Release 不包含安卓翻译功能。
 
-Still in development stage, welcome to submit issues or feature requests.
+本项目仍处于 Alpha 阶段，并非 JHenTai 官方版本。使用中遇到的问题请提交到本仓库，不要向原版 JHenTai 报告本项目特有的问题。
 
-## Download & Install
+## 当前功能
 
-[<img src="https://raw.githubusercontent.com/jiangtian616/JHenTai/master/badges/download_from_github.png" 
-      alt="Download from GitHub" 
-      height="60">](https://github.com/jiangtian616/JHenTai/releases)
-[<img src="https://raw.githubusercontent.com/jiangtian616/JHenTai/master/badges/get_it_on_obtainium.png" 
-      alt="Get it on Obtainium" 
-      height="60">](https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22top.jtmonster.jhentai%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Fjiangtian616%2FJHenTai%22%2C%22author%22%3A%22jiangtian616%22%2C%22name%22%3A%22JHenTai%22%2C%22preferredApkIndex%22%3A0%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Afalse%2C%5C%22fallbackToOlderReleases%5C%22%3Atrue%2C%5C%22filterReleaseTitlesByRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22filterReleaseNotesByRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22verifyLatestTag%5C%22%3Afalse%2C%5C%22sortMethodChoice%5C%22%3A%5C%22date%5C%22%2C%5C%22useLatestAssetDateAsReleaseDate%5C%22%3Afalse%2C%5C%22releaseTitleAsVersion%5C%22%3Afalse%2C%5C%22trackOnly%5C%22%3Afalse%2C%5C%22versionExtractionRegEx%5C%22%3A%5C%22v(.*)%5C%22%2C%5C%22matchGroupToUse%5C%22%3A%5C%22%241%5C%22%2C%5C%22versionDetection%5C%22%3Atrue%2C%5C%22releaseDateAsVersion%5C%22%3Afalse%2C%5C%22useVersionCodeAsOSVersion%5C%22%3Afalse%2C%5C%22apkFilterRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22invertAPKFilter%5C%22%3Afalse%2C%5C%22autoApkFilterByArch%5C%22%3Atrue%2C%5C%22appName%5C%22%3A%5C%22JHenTai%5C%22%2C%5C%22appAuthor%5C%22%3A%5C%22JTMonster%5C%22%2C%5C%22shizukuPretendToBeGooglePlay%5C%22%3Afalse%2C%5C%22allowInsecure%5C%22%3Afalse%2C%5C%22exemptFromBackgroundUpdates%5C%22%3Afalse%2C%5C%22skipUpdateNotifications%5C%22%3Afalse%2C%5C%22about%5C%22%3A%5C%22https%3A%2F%2Fgithub.com%2Fjiangtian616%2FJHenTai%2Fblob%2Fmaster%2FREADME.md%5C%22%2C%5C%22refreshBeforeDownload%5C%22%3Afalse%7D%22%2C%22overrideSource%22%3Anull%7D)
+- 在阅读界面翻译当前页
+- 手动设置起始页和结束页，串行翻译指定范围
+- 显示范围任务进度，并可在当前页完成后停止
+- 在原图与译图之间切换
+- 本地缓存已经完成的译图，避免重复消耗时间和 API
+- 在软件内配置 DeepSeek API Key 和模型
+- 默认使用 `deepseek-v4-flash`，明确关闭思考模式
+- 软件内一键初始化 Windows 翻译环境
+- 自动准备 Python、隔离环境、检测/OCR/擦字依赖及默认模型
+- 初始化完成后由 JHenTai 自动启动本地翻译服务
 
-[<img src="https://raw.githubusercontent.com/jiangtian616/JHenTai/master/badges/add_to_altstore.png" 
-      alt="Add to AltStore" 
-      height="60">](https://intradeus.github.io/http-protocol-redirector?r=altstore://source?url=https://raw.githubusercontent.com/jiangtian616/JHenTai/refs/heads/master/altsource/AltSource.json)
-[<img src="https://raw.githubusercontent.com/jiangtian616/JHenTai/master/badges/add_to_sidestore.png" 
-      alt="Add to SideStore" 
-      height="60">](https://intradeus.github.io/http-protocol-redirector?r=sidestore://source?url=https://raw.githubusercontent.com/jiangtian616/JHenTai/refs/heads/master/altsource/AltSource.json)
-[<img src="https://raw.githubusercontent.com/jiangtian616/JHenTai/master/badges/add_to_feather.png" 
-      alt="Add to Feather" 
-      height="60">](https://intradeus.github.io/http-protocol-redirector?r=feather://source/https://raw.githubusercontent.com/jiangtian616/JHenTai/refs/heads/master/altsource/AltSource.json)
+## 下载
 
-Install for Android: download .apk according to your device architecture and install.
+请从 [Releases](https://github.com/Riderich/JHenTai-Image-Translation/releases) 下载最新的 Windows 预发布版。
 
-- arm64-v8a：Suitable for Android phones with 8th generation ARM processor(common choice)
-- armeabiv-v7a：Suitable for Android phones with 7th generation ARM processor
-- x86_64：rare
+当前测试版：
 
-Install for iOS: download .ipa, then use [AltStore](https://altstore.io) or SideLoadly to sign.
+- [漫画图片翻译 v0.1.0 Alpha 2（一键初始化测试版）](https://github.com/Riderich/JHenTai-Image-Translation/releases/tag/v0.1.0-image-translation-alpha.2)
 
-- You can get easier installation and updates by adding [AltStore Repo](https://intradeus.github.io/http-protocol-redirector?r=altstore://source?url=https://raw.githubusercontent.com/jiangtian616/JHenTai/refs/heads/master/altsource/AltSource.json)
+下载后必须**完整解压**，不要直接在压缩包中运行程序。目录中的 `app`、`translation_service` 和 `translation_engine` 都是初始化所需内容。
 
-Install for Windows: download Windows_xxx.zip, then unpack it.
+## 首次初始化
 
-- If you use a proxy server, set proxy address at network setting page.
-- If you're using Windows 11 and can't launch app, try to run jhentai.exe in compatibility mode.
-- If it's blocked by Windows Defender, Please trust it.
+1. 运行 `app/jhentai.exe`。
+2. 打开 **设置 → 漫画翻译**。
+3. 点击 **初始化翻译环境**。
+4. 等待软件自动安装独立 Python 环境、图片处理依赖和默认模型。
+5. 初始化完成后，状态会变成“翻译服务已就绪”。
+6. 填写自己的 DeepSeek API Key，保存设置并测试连接。
 
-Install for MacOS(No maintenance): download .dmg.
+初始化预计下载约 **4–7 GB**，建议至少预留 **12 GB** 可用空间。网络速度、PyTorch 依赖和模型下载会显著影响耗时。下载中断后可以点击重试，已经下载或安装的内容会尽量复用。
 
-- Trust it in system setting.
-- If you use a proxy server, set proxy address at network setting page.
+当前 Alpha 版默认采用 CPU 兼容模式。NVIDIA GPU 加速选择和更完整的安装恢复机制仍在开发中。
 
-Install for Linux(No maintenance): download Linux-amd64.deb or Linux-x86_64.AppImage due to your platform, then install
-or execute it (You may need to install webkit2gtk-4.1).
+## 翻译漫画
 
-Fedora-based dnf linux distro:
+1. 在 JHenTai 中打开一本漫画并进入阅读界面。
+2. 打开顶部菜单，点击翻译图标。
+3. 选择 **翻译当前页**，或者选择 **翻译页面范围…**。
+4. 等待检测、OCR、DeepSeek 翻译、擦字和中文嵌字完成。
+5. 使用菜单中的 **显示原图/显示译图** 检查效果。
 
-```bash
-sudo rpm --import https://meeks233.github.io/Jhentai-rpm/fedora/RPM-GPG-KEY-jhentai
-sudo curl -fsSL -o /etc/yum.repos.d/jhentai.repo https://meeks233.github.io/Jhentai-rpm/fedora/jhentai.repo
-sudo dnf install -y jhentai
+范围翻译每次只处理一页，避免同时占用过多内存、显存和 API 请求。已经成功缓存的页面会自动跳过。
+
+## 工作流程
+
+```text
+漫画原图
+  → 本机文字区域检测
+  → 本机日文 OCR
+  → DeepSeek API 翻译识别出的文字
+  → 本机擦除原文
+  → 本机排版并嵌入中文
+  → 缓存并显示完整译图
 ```
 
+图片处理通过本机 `127.0.0.1` 服务完成。DeepSeek API Key 保存在 JHenTai 的本机配置中，并随翻译请求传给本机服务；DeepSeek 接收需要翻译的文字。请勿把本项目的本地 HTTP 服务暴露到公网，也不要把自己的 Key 写入源码、日志或 Issue。
 
-- If you use a proxy server, set proxy address at network setting page.
+## 资源消耗
 
-## Update
+| 阶段 | 主要资源 | 说明 |
+|---|---|---|
+| 初始化 | 网络、磁盘、CPU | 安装 Python/PyTorch 依赖并下载模型，耗时最长 |
+| 文字检测与 OCR | CPU、内存 | 当前测试版默认使用 CPU，漫画分辨率越高耗时越长 |
+| DeepSeek 翻译 | 网络、API 额度 | 只负责机器翻译，已关闭思考模式 |
+| 擦字与中文嵌字 | CPU、内存 | 在本机生成最终译图 |
+| 译图缓存 | 磁盘 | 已翻译页面会保存在 JHenTai 数据目录中 |
 
-Update for Android: download .apk according to your device architecture and install.
+## 已知限制
 
-Update for iOS: download .ipa, then use [AltStore](https://altstore.io) or SideLoadly to sign.
+- 当前只发布 Windows x64 一键初始化测试包
+- 首次初始化下载量大，部分网络环境可能需要重试
+- 默认 CPU 模式速度较慢
+- Clash 系统代理、TUN/虚拟网卡或安全软件可能影响 Python、模型和 DeepSeek 连接
+- OCR、气泡检测、擦字与排版仍可能出现错误
+- DeepSeek Key 当前保存在本机应用配置中，尚未接入系统凭据保险库
+- 安卓端需要独立的移动推理实现，不能直接把 Windows/Python 后端打包进 APK
 
-Update for Windows: Delete old unpacked directory directly, then download latest Windows_xxx.zip, unpack it.
+## 开发状态
 
-Update for MacOS(No maintenance): download .dmg.
+主要开发分支：`feature/image-translation`
 
-Update for Linux(No maintenance): Delete old and download the latest product.
+本地构建 Windows 版：
 
-## Help With Translation
+```powershell
+flutter pub get
+flutter build windows --release -t lib/src/main.dart
+```
 
-Please submit a PR if you want to help with translation.
+翻译适配层位于 `translation_service/`。对 `manga-image-translator` 的必要兼容改动以补丁形式保存在：
 
-[steps](https://github.com/jiangtian616/JHenTai#Translation)
+```text
+translation_service/manga-image-translator.patch
+```
 
-## Develop Motivation
+## 上游项目与致谢
 
-My first project With Flutter. I aim at getting familiar with Flutter during development. Devices I use include Android
-phone, Ipad and Windows computer. E-hentai apps I used before have several bugs, and I don't understand source code
-because I have no development
-experience with Android or ios, so I choose JHenTai to become my first Flutter Project.
+本仓库是在以下开源项目基础上进行的实验性开发：
 
-2022.08.20 After five months of development, JHenTai has gradually become more and more strong, and I have completely
-refactored some codes for gallery page, reading page, download, etc.
-which are written at the beginning stage. I tried my best to extract the commonality between different page and style to
-reduce coupling,
-in order to benefit the development of new features. I would be very grateful if any kind of you could give me some
-advice on coding style,
-design patterns and anything related to Flutter development or participate in the development of JHenTai.
+- [JHenTai](https://github.com/jiangtian616/JHenTai)：跨平台 E-Hentai/ExHentai 客户端与阅读器界面
+- [manga-image-translator](https://github.com/zyddnys/manga-image-translator)：文字检测、OCR、翻译、擦字和嵌字流程
+- [DeepSeek](https://www.deepseek.com/)：可选的在线机器翻译模型服务
 
-2022.10.29 I have been more familiar with basic Flutter development, and I'll focus on another area from now on.
-So updates for JHenTai will be less than previous, but I'll still handle bugs or issues in time。
+本项目名称中的 JHenTai 用于说明技术来源和兼容关系，不代表获得原项目官方背书。
 
-## References & Thanks
+## 许可证
 
-Layout and style references:
-
-- [FEhviewer](https://github.com/honjow/FEhViewer) : Mainly
-- [EHPanda](https://github.com/tatsuz0u/EhPanda)
-- [EHViewer](https://gitlab.com/NekoInverter/EhViewer)
-
-Tag translation:
-
-- [EhTagTranslation](https://github.com/EhTagTranslation/Database)
-
-Tag order optimization:
-
-- [e-hentai-db](https://github.com/ccloli/e-hentai-db)
-- [e-hentai-tag-count](https://github.com/mokurin000/e-hentai-tag-count)
-- [EhSyringe](https://github.com/EhTagTranslation/EhSyringe)
-
-App translation：
-
-- [andyching168](https://github.com/andyching168) [kenny03211](https://github.com/kenny03211) [NeKoOuO](https://github.com/NeKoOuO) 繁體中文(台灣)
-- [lucas-04](https://github.com/lucas-04) Português brasileiro
-- [qlife1146](https://github.com/qlife1146) 한국어
-- [bropines](https://github.com/bropines) Russian
-
-mush thanks to these projects and people🙇‍
-
-## Screenshots
-
-### Mobile Layout
-
-<img width="250" src="screenshot/mobile_v2.jpg"/>
-
-### Tablet Layout
-
-<img width="770" src="screenshot/tabletV2.png"/>
-
-### Desktop Layout
-
-<img width="770" src="screenshot/desktop1.png"/>
-
-### Gallery & Search
-
-<img width="250" style="margin-right:10px" src="screenshot/mobile_v2.jpg"/><img width="250" style="margin-right:10px" src="screenshot/search.jpg"/> 
-
-### Gallery Detail
-
-<img width="250" src="screenshot/detail.png" style="margin-right:10px" /><img width="250" src="screenshot/archive.jpg" style="margin-right:10px" />
-
-### Setting & Download
-
-<img width="270" src="screenshot/setting_en.jpg" style="margin-right:10px" /><img width="250" src="screenshot/download.jpg" style="margin-right:10px" />
-
-### Read
-
-<img width="250" src="screenshot/read.jpg" /><img src="screenshot/read_double_column.png" /><img src="screenshot/read_continuous_scroll.png" />
-
-## Main Features
-
--   [x] Mobile, tablet, desktop layout(3 kinds)
--   [x] Vertical, horizontal, double column read page layout(4 kinds)
--   [x] GalleryPage, Popular, Favorite, Watched, History, support multiple gallery list style
--   [x] search, search suggestion, tap tag to search, file search, jump to a certain page
--   [x] online reading and download, support restore download task, support synchronize updates after the uploader has
-    uploaded a new version
--   [x] archive download and automatic unpacking and reading
--   [x] support loading local images and read
--   [x] support assign priority to download task manually
--   [x] support assign group to gallery and archive
--   [x] favorite, rating, torrent, archive, statistics, share
--   [x] password login, Cookie login, web login
--   [x] support EX site(domain fronting optional)
--   [x] vote for Tag, watch and hidden tags
--   [x] comment, vote for comment
--   [x] Fingerprint unlock
-
-## Translation
-
-> [languageCode](https://github.com/unicode-org/cldr/blob/master/common/validity/language.xml)
->
-> [countryCode](https://github.com/unicode-org/cldr/blob/master/common/validity/region.xml)
-
-1. Copy `/lib/src/l18n/en_US.dart ` and rename to `{your_languageCode}_{your_countryCode}.dart`
-2. Rename classname in new file(optional)
-3. Modify k-v pairs in method `keys` ,translate values to your language
-
-Now you can submit your PR, I'll do the remaining things. Or you can go on with:
-
-4. Enter `/lib/src/l18n/locale_text.dart ` , add a new k-v pair in method `keys`
-   => `{your_languageCode}_{your_countryCode} : {your_className}.keys()`
-5. Enter `/lib/src/consts/locale_consts.dart`, add a new k-v pair in
-   property `localeCode2Description`: `{your_languageCode}_{your_countryCode} : {languageDescription}` to describe your
-   language.
-
-## About compiling
-
-1. You need to manage your Android signing by yourself,
-   check https://docs.flutter.dev/deployment/android#signing-the-app
-2. Just run this project via IDEA or VSCode simply.
-
-## Main Dart Dependencies
-
-- [get](https://pub.flutter-io.cn/packages/get): dependency management, state management, l18n, NoSQL
-- [dio](https://pub.flutter-io.cn/packages?q=dio): network
-- [extendedImage](https://pub.flutter-io.cn/packages/extended_image): image
-- [drift](https://pub.flutter-io.cn/packages/drift): database
+本仓库继续遵循 [Apache License 2.0](LICENSE)。上游依赖、模型、字体和第三方服务分别适用其各自的许可证及使用条款。
