@@ -16,6 +16,7 @@ import 'jh_service.dart';
 import 'log.dart';
 import 'path_service.dart';
 import 'translation_runtime_service.dart';
+import 'android_image_translation_service.dart';
 
 enum ImageTranslationStatus { idle, translating, success, error }
 
@@ -117,6 +118,19 @@ class ImageTranslationService extends GetxController
     update([updateId(info, index)]);
 
     try {
+      if (GetPlatform.isAndroid) {
+        final Uint8List translatedBytes =
+            await AndroidImageTranslationService().translate(imageBytes);
+        await _cacheTranslatedBytes(
+          info: info,
+          index: index,
+          translatedBytes: translatedBytes,
+          extension: 'png',
+          current: current,
+          key: key,
+        );
+        return;
+      }
       final Duration timeout = Duration(
         seconds: translationSetting.requestTimeoutSeconds.value,
       );
@@ -157,18 +171,14 @@ class ImageTranslationService extends GetxController
       final String extension = _extensionFromContentType(
         response.headers.value(dio.Headers.contentTypeHeader),
       );
-      final String relativePath = _cacheRelativePath(info, index, extension);
-      final File output = File(
-        path.join(pathService.getVisibleDir().path, relativePath),
+      await _cacheTranslatedBytes(
+        info: info,
+        index: index,
+        translatedBytes: Uint8List.fromList(translatedBytes),
+        extension: extension,
+        current: current,
+        key: key,
       );
-      await output.create(recursive: true);
-      await output.writeAsBytes(translatedBytes, flush: true);
-
-      current
-        ..status = ImageTranslationStatus.success
-        ..relativePath = relativePath
-        ..error = null;
-      log.info('Translated page cached: $key -> $relativePath');
     } catch (e, stack) {
       current
         ..status = ImageTranslationStatus.error
@@ -182,6 +192,9 @@ class ImageTranslationService extends GetxController
 
   Future<bool> testConnection() async {
     try {
+      if (GetPlatform.isAndroid) {
+        return await AndroidImageTranslationService().testConnection();
+      }
       final dio.Dio client = dio.Dio(
         dio.BaseOptions(
           connectTimeout: const Duration(seconds: 5),
@@ -205,6 +218,27 @@ class ImageTranslationService extends GetxController
       log.warning('Image translation service health check failed', e);
       return false;
     }
+  }
+
+  Future<void> _cacheTranslatedBytes({
+    required ReadPageInfo info,
+    required int index,
+    required Uint8List translatedBytes,
+    required String extension,
+    required ImageTranslationEntry current,
+    required String key,
+  }) async {
+    final String relativePath = _cacheRelativePath(info, index, extension);
+    final File output = File(
+      path.join(pathService.getVisibleDir().path, relativePath),
+    );
+    await output.create(recursive: true);
+    await output.writeAsBytes(translatedBytes, flush: true);
+    current
+      ..status = ImageTranslationStatus.success
+      ..relativePath = relativePath
+      ..error = null;
+    log.info('Translated page cached: $key -> $relativePath');
   }
 
   Future<void> clearCache() async {

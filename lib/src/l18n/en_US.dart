@@ -45,19 +45,30 @@ class en_US {
       'translationSettings': 'Translation settings',
       'translationServiceHint':
           'JHenTai sends the current page to a local translation service. The service performs text detection, OCR, translation, inpainting, and typesetting, then returns a translated image.',
+      'androidTranslationServiceHint':
+          'Android runs independently on the phone. Japanese OCR and image rendering stay on-device; only recognized text is sent to your API. No PC or local service is required.',
+      'androidNativeTranslation':
+          'Android standalone translation (experimental)',
+      'androidNativeTranslationHint':
+          'Uses bundled Japanese OCR, on-device text removal, and Chinese typesetting. This version requires an OpenAI-compatible translation API.',
       'translationRuntimeTitle': 'Local translation runtime',
       'initializeTranslationRuntime': 'Initialize translation runtime',
       'startTranslationRuntime': 'Start translation service',
       'translationRuntimePreparing': 'Preparing initialization…',
       'translationRuntimeReady': 'Translation service is ready',
       'translationRuntimeStopped': 'The runtime is installed but not running',
-      'translationRuntimeNotInitialized': 'Not initialized. Click the button to prepare all dependencies automatically.',
+      'translationRuntimeNotInitialized':
+          'Not initialized. Click the button to prepare all dependencies automatically.',
       'translationRuntimeStarting': 'Starting translation services…',
-      'translationRuntimeBundleMissing': 'The test package is incomplete. Download it again and extract every file.',
-      'translationRuntimeStartTimeout': 'Translation service start timed out. Please retry.',
-      'translationRuntimeSizeHint': 'Downloads about 4–7 GB and requires at least 12 GB free. Existing downloads are reused when retrying.',
+      'translationRuntimeBundleMissing':
+          'The test package is incomplete. Download it again and extract every file.',
+      'translationRuntimeStartTimeout':
+          'Translation service start timed out. Please retry.',
+      'translationRuntimeSizeHint':
+          'Downloads about 4–7 GB and requires at least 12 GB free. Existing downloads are reused when retrying.',
       'useCudaAcceleration': 'Use NVIDIA CUDA acceleration',
-      'useCudaAccelerationHint': 'An NVIDIA GPU was detected. Installs CUDA 12.8 PyTorch and falls back to CPU if unavailable.',
+      'useCudaAccelerationHint':
+          'An NVIDIA GPU was detected. Installs CUDA 12.8 PyTorch and falls back to CPU if unavailable.',
       'translationServiceUrl': 'Local service URL',
       'translationApiToken': 'API token (optional)',
       'translationProvider': 'Machine translation provider',
@@ -65,22 +76,27 @@ class en_US {
       'nllbLocal': 'Local NLLB 600M (low-spec recommended)',
       'nllbBigLocal': 'Local NLLB 1.3B (CUDA recommended)',
       'translationApiBaseUrl': 'API base URL',
-      'translationApiBaseUrlHint': 'For example https://api.deepseek.com or a local compatible /v1 endpoint',
+      'translationApiBaseUrlHint':
+          'For example https://api.deepseek.com or a local compatible /v1 endpoint',
       'translationApiKey': 'API key',
-      'translationApiKeyHint': 'Stored locally; may be empty for a local service without authentication',
+      'translationApiKeyHint':
+          'Stored locally; may be empty for a local service without authentication',
       'translationApiModel': 'Model name',
-      'translationApiModelHint': 'Provider-defined, for example deepseek-v4-flash or qwen3:8b',
+      'translationApiModelHint':
+          'Provider-defined, for example deepseek-v4-flash or qwen3:8b',
       'disableThinking': 'Request thinking disabled',
-      'disableThinkingHint': 'Sends thinking=disabled; turn this off if the provider does not support it',
-      'localTranslationModelHint': 'Local models require no API key and download on first use. CUDA can greatly improve speed.',
+      'disableThinkingHint':
+          'Sends thinking=disabled; turn this off if the provider does not support it',
+      'localTranslationModelHint':
+          'Local models require no API key and download on first use. CUDA can greatly improve speed.',
       'sourceLanguage': 'Source language',
       'targetLanguage': 'Target language',
       'translationTimeout': 'Request timeout',
       'saveTranslationSettings': 'Save settings',
       'testConnection': 'Test connection',
-      'translationServiceConnected': 'Translation service connected',
+      'translationServiceConnected': 'Translation connection succeeded',
       'translationServiceUnavailable':
-          'Translation service is unavailable. Start it and check the URL.',
+          'Unable to connect. Check the network, API URL, key, and model name.',
       'clearTranslationCache': 'Clear translated image cache',
       'translationCacheCleared': 'Translation cache cleared',
       'translateCurrentPage': 'Translate current page',
@@ -90,11 +106,14 @@ class en_US {
       'rangeStartPage': 'From page',
       'rangeEndPage': 'To page',
       'translationPageRangeHint': 'Enter a page from 1 to @count',
-      'translationRangeOrderError': 'The start page cannot be after the end page',
+      'translationRangeOrderError':
+          'The start page cannot be after the end page',
       'translatingPageRange': 'Translating',
       'stopTranslationRange': 'Stop range translation',
-      'translationRangeCompleted': 'Range completed: @completed/@total processed, @failed failed',
-      'translationRangeStopped': 'Stopped: @completed/@total processed, @failed failed',
+      'translationRangeCompleted':
+          'Range completed: @completed/@total processed, @failed failed',
+      'translationRangeStopped':
+          'Stopped: @completed/@total processed, @failed failed',
       'showOriginalImage': 'Show original image',
       'showTranslatedImage': 'Show translated image',
       'translationImageNotReady': 'The current image is not ready yet',

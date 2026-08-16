@@ -65,7 +65,8 @@ android {
     /// If you want to use debug signing config, use default [signingConfigs.debug]
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            // Personal test releases can be installed without a private production keystore.
+            signingConfig keystorePropertiesFile.exists() ? signingConfigs.release : signingConfigs.debug
         }
     }
 }
@@ -76,4 +77,6 @@ flutter {
 
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
+    // Bundled model: Android translation works without Google Play Services.
+    implementation "com.google.mlkit:text-recognition-japanese:16.0.1"
 }
