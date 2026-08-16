@@ -1,5 +1,7 @@
 ﻿import 'dart:async';
+import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
@@ -19,6 +21,8 @@ import 'package:jhentai/src/pages/read/layout/horizontal_page/horizontal_page_la
 import 'package:jhentai/src/pages/read/layout/vertical_list/vertical_list_layout_logic.dart';
 import 'package:jhentai/src/pages/read/read_page_state.dart';
 import 'package:jhentai/src/service/super_resolution_service.dart';
+import 'package:jhentai/src/service/image_translation_service.dart';
+import 'package:jhentai/src/service/gallery_download/download_path_resolver.dart';
 import 'package:jhentai/src/service/volume_service.dart';
 import 'package:jhentai/src/setting/style_setting.dart';
 import 'package:jhentai/src/utils/eh_executor.dart';
@@ -27,6 +31,7 @@ import 'package:screen_brightness/screen_brightness.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:throttling/throttling.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:path/path.dart' as path;
 
 import '../../model/detail_page_info.dart';
 import '../../model/gallery_image.dart';
@@ -799,7 +804,69 @@ class ReadPageLogic extends GetxController with WidgetsBindingObserver, GalleryI
 
   void recordReadProgress(int index) {
     state.readPageInfo.currentImageIndex = index;
-    update([sliderId, pageNoId, thumbnailNoId]);
+    update([sliderId, pageNoId, thumbnailNoId, topMenuId]);
+  }
+
+  ImageTranslationEntry get currentTranslationEntry {
+    return imageTranslationService.entry(state.readPageInfo, state.readPageInfo.currentImageIndex);
+  }
+
+  Future<void> translateCurrentPage() async {
+    final int index = state.readPageInfo.currentImageIndex;
+    final GalleryImage? image = state.images[index];
+    if (image == null) {
+      toast('translationImageNotReady'.tr, isShort: false);
+      return;
+    }
+
+    try {
+      final Uint8List? bytes;
+      final String fileName;
+      if (state.readPageInfo.mode == ReadMode.online) {
+        bytes = await getNetworkImageData(image.url);
+        final String remoteName = path.basename(Uri.parse(image.url).path);
+        fileName = remoteName.isEmpty ? 'page_$index.jpg' : remoteName;
+      } else {
+        if (image.path == null) {
+          throw StateError('Local image path is unavailable');
+        }
+        final String absolutePath = DownloadPathResolver.computeImageDownloadAbsolutePathFromRelativePath(image.path!);
+        final File file = File(absolutePath);
+        bytes = await file.readAsBytes();
+        fileName = path.basename(absolutePath);
+      }
+      if (bytes == null || bytes.isEmpty) {
+        throw StateError('Unable to read image bytes');
+      }
+
+      state.showTranslatedImages = true;
+      updateSafely([topMenuId]);
+      await imageTranslationService.translate(
+        info: state.readPageInfo,
+        index: index,
+        imageBytes: bytes,
+        fileName: fileName,
+      );
+      toast('translationCompleted'.tr);
+    } catch (e) {
+      toast('${'translationFailed'.tr}: $e', isShort: false);
+    } finally {
+      updateSafely([topMenuId]);
+    }
+  }
+
+  void toggleTranslatedImages() {
+    state.showTranslatedImages = !state.showTranslatedImages;
+    updateSafely([topMenuId]);
+    layoutLogic.updateSafely([BaseLayoutLogic.pageId]);
+  }
+
+  Future<void> openTranslationSetting() async {
+    restoreImmersiveMode();
+    toRoute(Routes.settingTranslation, id: fullScreen)?.then((_) {
+      applyCurrentImmersiveMode();
+      state.focusNode.requestFocus();
+    });
   }
 
   Future<void> _flushReadProgress() async {

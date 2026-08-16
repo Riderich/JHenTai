@@ -37,6 +37,7 @@ import 'package:jhentai/src/pages/setting/read/setting_read_page.dart';
 import 'package:jhentai/src/pages/setting/security/setting_security_page.dart';
 import 'package:jhentai/src/pages/setting/setting_page.dart';
 import 'package:jhentai/src/pages/setting/style/setting_style_page.dart';
+import 'package:jhentai/src/pages/setting/translation/setting_translation_page.dart';
 import 'package:jhentai/src/pages/watched/watched_page.dart';
 import 'package:jhentai/src/pages/webview/webview_page.dart';
 import 'package:jhentai/src/setting/preference_setting.dart';
@@ -94,6 +95,7 @@ class Routes {
   static const String settingEH = "/setting_EH";
   static const String settingStyle = "/setting_style";
   static const String settingRead = "/setting_read";
+  static const String settingTranslation = "/setting_translation";
   static const String settingPreference = "/setting_preference";
   static const String settingNetwork = "/setting_network";
   static const String settingDownload = "/setting_download";
@@ -286,6 +288,11 @@ class Routes {
     EHPage(
       name: settingRead,
       page: () => SettingReadPage().withEscOrFifthButton2BackRightRoute(),
+      transition: defaultTransition,
+    ),
+    EHPage(
+      name: settingTranslation,
+      page: () => const SettingTranslationPage().withEscOrFifthButton2BackRightRoute(),
       transition: defaultTransition,
     ),
     EHPage(

@@ -17,6 +17,7 @@ import 'package:jhentai/src/service/cloud_service.dart';
 import 'package:jhentai/src/service/frame_rate_service.dart';
 import 'package:jhentai/src/service/gallery_download/gallery_download_service.dart';
 import 'package:jhentai/src/service/history_service.dart';
+import 'package:jhentai/src/service/image_translation_service.dart';
 import 'package:jhentai/src/service/isolate_service.dart';
 import 'package:jhentai/src/service/jh_service.dart';
 import 'package:jhentai/src/service/local_block_rule_service.dart';
@@ -49,6 +50,7 @@ import 'package:jhentai/src/setting/read_setting.dart';
 import 'package:jhentai/src/setting/security_setting.dart';
 import 'package:jhentai/src/setting/site_setting.dart';
 import 'package:jhentai/src/setting/style_setting.dart';
+import 'package:jhentai/src/setting/translation_setting.dart';
 import 'package:jhentai/src/setting/super_resolution_setting.dart';
 import 'package:jhentai/src/setting/user_setting.dart';
 import 'package:jhentai/src/widget/app_manager.dart';
@@ -67,6 +69,7 @@ List<JHLifeCircleBean> lifeCircleBeans = [
   cloudConfigService,
   frameRateService,
   historyService,
+  imageTranslationService,
   isolateService,
   localBlockRuleService,
   localConfigService,
@@ -96,6 +99,7 @@ List<JHLifeCircleBean> lifeCircleBeans = [
   securitySetting,
   siteSetting,
   styleSetting,
+  translationSetting,
   superResolutionSetting,
   userSetting,
   keyboardShortcutSetting,

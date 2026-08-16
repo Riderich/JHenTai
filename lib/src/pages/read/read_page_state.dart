@@ -60,6 +60,7 @@ class ReadPageState with ScrollStatusListerState {
   Battery battery = Battery();
   int batteryLevel = 100;
   bool useSuperResolution = false;
+  bool showTranslatedImages = true;
   bool displayFirstPageAlone = readSetting.displayFirstPageAlone.value;
   FocusNode focusNode = FocusNode();
 

@@ -14,6 +14,7 @@ import 'package:jhentai/src/pages/read/layout/horizontal_page/horizontal_page_la
 import 'package:jhentai/src/pages/read/read_page_logic.dart';
 import 'package:jhentai/src/pages/read/read_page_state.dart';
 import 'package:jhentai/src/service/super_resolution_service.dart';
+import 'package:jhentai/src/service/image_translation_service.dart';
 import 'package:jhentai/src/widget/eh_mouse_button_listener.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:window_manager/window_manager.dart';
@@ -284,6 +285,46 @@ class _ReadPageState extends State<ReadPage> with ScrollStatusListener, WindowLi
             title: Text(state.readPageInfo.galleryTitle, style: const TextStyle(color: UIConfig.readPageButtonColor)),
             leading: const BackButton(color: UIConfig.readPageButtonColor),
             actions: [
+              GetBuilder<ImageTranslationService>(
+                id: imageTranslationService.updateId(state.readPageInfo, state.readPageInfo.currentImageIndex),
+                builder: (_) {
+                  final ImageTranslationEntry entry = logic.currentTranslationEntry;
+                  if (entry.status == ImageTranslationStatus.translating) {
+                    return const SizedBox(
+                      width: 56,
+                      height: 56,
+                      child: Center(child: SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))),
+                    );
+                  }
+                  return PopupMenuButton<String>(
+                    tooltip: 'imageTranslation'.tr,
+                    icon: Icon(
+                      Icons.translate,
+                      color: entry.status == ImageTranslationStatus.success && state.showTranslatedImages
+                          ? UIConfig.readPageActiveButtonColor(context)
+                          : UIConfig.readPageButtonColor,
+                    ),
+                    onSelected: (value) {
+                      if (value == 'translate') {
+                        logic.translateCurrentPage();
+                      } else if (value == 'toggle') {
+                        logic.toggleTranslatedImages();
+                      } else if (value == 'settings') {
+                        logic.openTranslationSetting();
+                      }
+                    },
+                    itemBuilder: (_) => [
+                      PopupMenuItem(value: 'translate', child: Text('translateCurrentPage'.tr)),
+                      if (entry.status == ImageTranslationStatus.success)
+                        PopupMenuItem(
+                          value: 'toggle',
+                          child: Text(state.showTranslatedImages ? 'showOriginalImage'.tr : 'showTranslatedImage'.tr),
+                        ),
+                      PopupMenuItem(value: 'settings', child: Text('translationSettings'.tr)),
+                    ],
+                  );
+                },
+              ),
               if (GetPlatform.isDesktop &&
                   state.readPageInfo.gid != null &&
                   (state.readPageInfo.mode == ReadMode.downloaded || state.readPageInfo.mode == ReadMode.archive) &&
