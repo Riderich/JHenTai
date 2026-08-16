@@ -1,6 +1,7 @@
 param(
     [Parameter(Mandatory = $true)][string]$RuntimeRoot,
-    [Parameter(Mandatory = $true)][string]$BundleRoot
+    [Parameter(Mandatory = $true)][string]$BundleRoot,
+    [string]$UseCuda = 'false'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -56,6 +57,18 @@ if (-not (Test-Path $venvPython)) {
 
 Report 35 '正在更新安装工具'
 & $venvPython -m pip install --disable-pip-version-check --upgrade pip setuptools wheel
+if ([System.Convert]::ToBoolean($UseCuda)) {
+    Report 38 '检测到 NVIDIA 显卡，正在安装 CUDA 12.8 加速组件'
+    & $venvPython -m pip install --disable-pip-version-check torch==2.10.0 torchvision==0.25.0 --index-url https://download.pytorch.org/whl/cu128
+    & $venvPython -c "import sys, torch; sys.exit(0 if torch.cuda.is_available() else 1)"
+    if ($LASTEXITCODE -eq 0) {
+        Set-Content -LiteralPath (Join-Path $RuntimeRoot 'cuda.txt') -Value 'cu128' -Encoding ascii
+        Report 40 'CUDA 加速可用'
+    } else {
+        Remove-Item -LiteralPath (Join-Path $RuntimeRoot 'cuda.txt') -Force -ErrorAction SilentlyContinue
+        Report 40 'CUDA 不可用，将自动使用 CPU 兼容模式'
+    }
+}
 Report 42 '正在安装图片识别与修复依赖（下载量较大）'
 & $venvPython -m pip install --disable-pip-version-check -r (Join-Path $engineRoot 'requirements.txt')
 Report 70 '正在安装 JHenTai 本地服务'

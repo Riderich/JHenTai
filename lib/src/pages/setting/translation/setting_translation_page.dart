@@ -17,13 +17,15 @@ class SettingTranslationPage extends StatefulWidget {
 class _SettingTranslationPageState extends State<SettingTranslationPage> {
   late final TextEditingController serviceUrlController;
   late final TextEditingController apiTokenController;
-  late final TextEditingController deepSeekApiKeyController;
+  late final TextEditingController apiBaseUrlController;
+  late final TextEditingController apiKeyController;
+  late final TextEditingController apiModelController;
   late final TextEditingController sourceLanguageController;
   late final TextEditingController targetLanguageController;
   late final TextEditingController timeoutController;
   bool testing = false;
   late String translationProvider;
-  late String deepSeekModel;
+  late bool disableThinking;
 
   @override
   void initState() {
@@ -35,11 +37,14 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
     apiTokenController = TextEditingController(
       text: translationSetting.apiToken.value,
     );
-    deepSeekApiKeyController = TextEditingController(
-      text: translationSetting.deepSeekApiKey.value,
-    );
+    apiBaseUrlController =
+        TextEditingController(text: translationSetting.apiBaseUrl.value);
+    apiKeyController =
+        TextEditingController(text: translationSetting.apiKey.value);
+    apiModelController =
+        TextEditingController(text: translationSetting.apiModel.value);
     translationProvider = translationSetting.translationProvider.value;
-    deepSeekModel = translationSetting.deepSeekModel.value;
+    disableThinking = translationSetting.disableThinking.value;
     sourceLanguageController = TextEditingController(
       text: translationSetting.sourceLanguage.value,
     );
@@ -55,7 +60,9 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
   void dispose() {
     serviceUrlController.dispose();
     apiTokenController.dispose();
-    deepSeekApiKeyController.dispose();
+    apiBaseUrlController.dispose();
+    apiKeyController.dispose();
+    apiModelController.dispose();
     sourceLanguageController.dispose();
     targetLanguageController.dispose();
     timeoutController.dispose();
@@ -67,8 +74,10 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
       serviceUrl: serviceUrlController.text,
       apiToken: apiTokenController.text,
       translationProvider: translationProvider,
-      deepSeekApiKey: deepSeekApiKeyController.text,
-      deepSeekModel: deepSeekModel,
+      apiBaseUrl: apiBaseUrlController.text,
+      apiKey: apiKeyController.text,
+      apiModel: apiModelController.text,
+      disableThinking: disableThinking,
       sourceLanguage: sourceLanguageController.text,
       targetLanguage: targetLanguageController.text,
       requestTimeoutSeconds: int.tryParse(timeoutController.text) ?? 300,
@@ -159,6 +168,15 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
                           ),
                         ),
                         if (!runtime.isInitialized) ...[
+                          if (runtime.nvidiaAvailable)
+                            SwitchListTile(
+                              contentPadding: EdgeInsets.zero,
+                              title: Text('useCudaAcceleration'.tr),
+                              subtitle: Text('useCudaAccelerationHint'.tr),
+                              value: runtime.useCuda,
+                              onChanged:
+                                  runtime.isBusy ? null : runtime.setUseCuda,
+                            ),
                           const SizedBox(height: 8),
                           Text(
                             'translationRuntimeSizeHint'.tr,
@@ -197,12 +215,16 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
               ),
               items: [
                 DropdownMenuItem(
-                  value: 'deepseek',
-                  child: Text('deepSeekApi'.tr),
+                  value: 'openai_compatible',
+                  child: Text('openAICompatibleApi'.tr),
                 ),
                 DropdownMenuItem(
-                  value: 'sugoi',
-                  child: Text('sugoiLocal'.tr),
+                  value: 'nllb',
+                  child: Text('nllbLocal'.tr),
+                ),
+                DropdownMenuItem(
+                  value: 'nllb_big',
+                  child: Text('nllbBigLocal'.tr),
                 ),
               ],
               onChanged: (value) {
@@ -211,40 +233,45 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
                 }
               },
             ),
-            if (translationProvider == 'deepseek') ...[
+            if (translationProvider == 'openai_compatible') ...[
               const SizedBox(height: 16),
               TextField(
-                controller: deepSeekApiKeyController,
-                obscureText: true,
+                controller: apiBaseUrlController,
                 decoration: InputDecoration(
-                  labelText: 'deepSeekApiKey'.tr,
-                  helperText: 'deepSeekApiKeyHint'.tr,
+                  labelText: 'translationApiBaseUrl'.tr,
+                  helperText: 'translationApiBaseUrlHint'.tr,
                   border: const OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                initialValue: deepSeekModel,
+              TextField(
+                controller: apiKeyController,
+                obscureText: true,
                 decoration: InputDecoration(
-                  labelText: 'deepSeekModel'.tr,
+                  labelText: 'translationApiKey'.tr,
+                  helperText: 'translationApiKeyHint'.tr,
                   border: const OutlineInputBorder(),
                 ),
-                items: const [
-                  DropdownMenuItem(
-                    value: 'deepseek-v4-flash',
-                    child: Text('DeepSeek V4 Flash'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'deepseek-v4-pro',
-                    child: Text('DeepSeek V4 Pro'),
-                  ),
-                ],
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() => deepSeekModel = value);
-                  }
-                },
               ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: apiModelController,
+                decoration: InputDecoration(
+                  labelText: 'translationApiModel'.tr,
+                  helperText: 'translationApiModelHint'.tr,
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text('disableThinking'.tr),
+                subtitle: Text('disableThinkingHint'.tr),
+                value: disableThinking,
+                onChanged: (value) => setState(() => disableThinking = value),
+              ),
+            ] else ...[
+              const SizedBox(height: 8),
+              Text('localTranslationModelHint'.tr),
             ],
             const SizedBox(height: 16),
             Row(

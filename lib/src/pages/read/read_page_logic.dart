@@ -892,7 +892,10 @@ class ReadPageLogic extends GetxController
   }
 
   Future<void> translateCurrentPage() async {
-    final int index = state.readPageInfo.currentImageIndex;
+    await translatePageAtIndex(state.readPageInfo.currentImageIndex);
+  }
+
+  Future<void> translatePageAtIndex(int index) async {
     try {
       state.showTranslatedImages = true;
       updateSafely([topMenuId]);
@@ -902,6 +905,7 @@ class ReadPageLogic extends GetxController
       toast('${'translationFailed'.tr}: $e', isShort: false);
     } finally {
       updateSafely([topMenuId]);
+      layoutLogic.updateSafely([BaseLayoutLogic.pageId]);
     }
   }
 

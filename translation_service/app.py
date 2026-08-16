@@ -42,8 +42,10 @@ def _check_token(authorization: str | None) -> None:
 def _engine_config(
     target_language: str,
     translation_provider: str,
-    deepseek_api_key: str,
-    deepseek_model: str,
+    api_base_url: str,
+    api_key: str,
+    api_model: str,
+    disable_thinking: bool,
 ) -> dict:
     try:
         config = json.loads(os.getenv("JHENTAI_MT_CONFIG_JSON", "{}"))
@@ -51,11 +53,14 @@ def _engine_config(
         raise HTTPException(status_code=500, detail=f"Invalid JHENTAI_MT_CONFIG_JSON: {exc}") from exc
 
     translator = config.setdefault("translator", {})
-    translator["translator"] = translation_provider or TRANSLATOR
+    provider = translation_provider or TRANSLATOR
+    translator["translator"] = "deepseek" if provider == "openai_compatible" else provider
     translator["target_lang"] = LANGUAGE_MAP.get(target_language.lower(), target_language.upper())
-    if translator["translator"] == "deepseek":
-        translator["deepseek_api_key"] = deepseek_api_key
-        translator["deepseek_model"] = deepseek_model or "deepseek-v4-flash"
+    if provider == "openai_compatible":
+        translator["api_base_url"] = api_base_url.rstrip("/")
+        translator["api_key"] = api_key
+        translator["api_model"] = api_model or "deepseek-v4-flash"
+        translator["disable_thinking"] = disable_thinking
     return config
 
 
@@ -72,26 +77,27 @@ async def health() -> dict:
 
 @app.post("/v1/test")
 async def test_configuration(
-    translation_provider: Annotated[str, Form()] = "deepseek",
-    deepseek_api_key: Annotated[str, Form()] = "",
-    deepseek_model: Annotated[str, Form()] = "deepseek-v4-flash",
+    translation_provider: Annotated[str, Form()] = "openai_compatible",
+    api_base_url: Annotated[str, Form()] = "https://api.deepseek.com",
+    api_key: Annotated[str, Form()] = "",
+    api_model: Annotated[str, Form()] = "deepseek-v4-flash",
+    disable_thinking: Annotated[bool, Form()] = True,
 ) -> dict:
     await health()
-    if translation_provider != "deepseek":
+    if translation_provider != "openai_compatible":
         return {"status": "ok", "provider": translation_provider}
-    if not deepseek_api_key.strip():
-        raise HTTPException(status_code=400, detail="DeepSeek API key is required")
     payload = {
-        "model": deepseek_model,
+        "model": api_model,
         "messages": [{"role": "user", "content": "Reply only with OK"}],
         "max_tokens": 4,
-        "thinking": {"type": "disabled"},
     }
-    headers = {"Authorization": f"Bearer {deepseek_api_key.strip()}"}
+    if disable_thinking:
+        payload["thinking"] = {"type": "disabled"}
+    headers = {"Authorization": f"Bearer {api_key.strip()}"} if api_key.strip() else {}
     try:
         async with httpx.AsyncClient(timeout=20) as client:
             response = await client.post(
-                "https://api.deepseek.com/chat/completions",
+                f"{api_base_url.rstrip('/')}/chat/completions",
                 json=payload,
                 headers=headers,
             )
@@ -99,11 +105,11 @@ async def test_configuration(
     except httpx.HTTPStatusError as exc:
         raise HTTPException(
             status_code=502,
-            detail=f"DeepSeek rejected the configuration (HTTP {exc.response.status_code})",
+            detail=f"Translation API rejected the configuration (HTTP {exc.response.status_code})",
         ) from exc
     except httpx.HTTPError as exc:
-        raise HTTPException(status_code=503, detail=f"DeepSeek unavailable: {exc}") from exc
-    return {"status": "ok", "provider": "deepseek", "model": deepseek_model}
+        raise HTTPException(status_code=503, detail=f"Translation API unavailable: {exc}") from exc
+    return {"status": "ok", "provider": translation_provider, "model": api_model}
 
 
 @app.post("/v1/translate")
@@ -113,9 +119,11 @@ async def translate(
     page_index: Annotated[int, Form()],
     source_language: Annotated[str, Form()] = "auto",
     target_language: Annotated[str, Form()] = "zh-CN",
-    translation_provider: Annotated[str, Form()] = "deepseek",
-    deepseek_api_key: Annotated[str, Form()] = "",
-    deepseek_model: Annotated[str, Form()] = "deepseek-v4-flash",
+    translation_provider: Annotated[str, Form()] = "openai_compatible",
+    api_base_url: Annotated[str, Form()] = "https://api.deepseek.com",
+    api_key: Annotated[str, Form()] = "",
+    api_model: Annotated[str, Form()] = "deepseek-v4-flash",
+    disable_thinking: Annotated[bool, Form()] = True,
     authorization: Annotated[str | None, Header()] = None,
 ) -> Response:
     del gallery_id, page_index, source_language
@@ -130,8 +138,10 @@ async def translate(
             _engine_config(
                 target_language,
                 translation_provider,
-                deepseek_api_key,
-                deepseek_model,
+                api_base_url,
+                api_key,
+                api_model,
+                disable_thinking,
             ),
             ensure_ascii=False,
         )

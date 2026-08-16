@@ -28,6 +28,8 @@ class TranslationRuntimeService extends GetxController {
   int progress = 0;
   String message = '';
   String? error;
+  bool nvidiaAvailable = false;
+  bool useCuda = false;
   Process? _engineProcess;
   Process? _adapterProcess;
 
@@ -40,6 +42,7 @@ class TranslationRuntimeService extends GetxController {
       File(path.join(runtimeRoot.path, 'initialized.txt')).existsSync();
 
   Future<void> refreshRuntime() async {
+    await detectNvidia();
     if (await _isHealthy()) {
       status = TranslationRuntimeStatus.ready;
       progress = 100;
@@ -52,6 +55,32 @@ class TranslationRuntimeService extends GetxController {
           : 'translationRuntimeNotInitialized'.tr;
     }
     update([updateId]);
+  }
+
+  Future<void> detectNvidia() async {
+    if (!Platform.isWindows) {
+      return;
+    }
+    try {
+      final ProcessResult result = await Process.run('nvidia-smi.exe', ['-L']);
+      nvidiaAvailable =
+          result.exitCode == 0 && result.stdout.toString().contains('GPU');
+      useCuda = useCuda || nvidiaAvailable;
+    } catch (_) {
+      nvidiaAvailable = false;
+    }
+    update([updateId]);
+  }
+
+  void setUseCuda(bool value) {
+    useCuda = value;
+    update([updateId]);
+  }
+
+  Future<void> startIfInitialized() async {
+    if (Platform.isWindows && isInitialized && !isBusy) {
+      await start();
+    }
   }
 
   Future<void> initialize() async {
@@ -86,6 +115,8 @@ class TranslationRuntimeService extends GetxController {
           runtimeRoot.path,
           '-BundleRoot',
           bundleRoot.path,
+          '-UseCuda',
+          '$useCuda',
         ],
         mode: ProcessStartMode.normal,
         runInShell: false,
@@ -140,16 +171,19 @@ class TranslationRuntimeService extends GetxController {
       final Map<String, String> environment = Map.of(Platform.environment)
         ..['MT_MODEL_DIR'] = path.join(runtimeRoot.path, 'models')
         ..['PYTHONPATH'] = engine;
+      final List<String> engineArguments = [
+        'server/main.py',
+        '--host',
+        '127.0.0.1',
+        '--port',
+        '8000',
+        '--start-instance',
+        if (File(path.join(runtimeRoot.path, 'cuda.txt')).existsSync())
+          '--use-gpu',
+      ];
       _engineProcess = await Process.start(
         python,
-        [
-          'server/main.py',
-          '--host',
-          '127.0.0.1',
-          '--port',
-          '8000',
-          '--start-instance'
-        ],
+        engineArguments,
         workingDirectory: engine,
         environment: environment,
         mode: ProcessStartMode.detachedWithStdio,

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -14,6 +15,7 @@ import 'gallery_download/gallery_download_service.dart';
 import 'jh_service.dart';
 import 'log.dart';
 import 'path_service.dart';
+import 'translation_runtime_service.dart';
 
 enum ImageTranslationStatus { idle, translating, success, error }
 
@@ -57,7 +59,9 @@ class ImageTranslationService extends GetxController
   }
 
   @override
-  Future<void> doAfterBeanReady() async {}
+  Future<void> doAfterBeanReady() async {
+    unawaited(translationRuntimeService.startIfInitialized());
+  }
 
   String updateId(ReadPageInfo info, int index) =>
       '$updateIdPrefix::${_pageKey(info, index)}';
@@ -135,8 +139,10 @@ class ImageTranslationService extends GetxController
         'source_language': translationSetting.sourceLanguage.value,
         'target_language': translationSetting.targetLanguage.value,
         'translation_provider': translationSetting.translationProvider.value,
-        'deepseek_api_key': translationSetting.deepSeekApiKey.value,
-        'deepseek_model': translationSetting.deepSeekModel.value,
+        'api_base_url': translationSetting.apiBaseUrl.value,
+        'api_key': translationSetting.apiKey.value,
+        'api_model': translationSetting.apiModel.value,
+        'disable_thinking': translationSetting.disableThinking.value,
       });
       final dio.Response<List<int>> response = await client.post<List<int>>(
         '${translationSetting.serviceUrl.value}/v1/translate',
@@ -186,8 +192,10 @@ class ImageTranslationService extends GetxController
         '${translationSetting.serviceUrl.value}/v1/test',
         data: dio.FormData.fromMap({
           'translation_provider': translationSetting.translationProvider.value,
-          'deepseek_api_key': translationSetting.deepSeekApiKey.value,
-          'deepseek_model': translationSetting.deepSeekModel.value,
+          'api_base_url': translationSetting.apiBaseUrl.value,
+          'api_key': translationSetting.apiKey.value,
+          'api_model': translationSetting.apiModel.value,
+          'disable_thinking': translationSetting.disableThinking.value,
         }),
       );
       return response.statusCode != null &&
@@ -219,11 +227,11 @@ class ImageTranslationService extends GetxController
   }
 
   String _pageKey(ReadPageInfo info, int index) =>
-      '${_galleryKey(info)}::$index::${translationSetting.targetLanguage.value}::${translationSetting.translationProvider.value}::${translationSetting.deepSeekModel.value}';
+      '${_galleryKey(info)}::$index::${translationSetting.targetLanguage.value}::${translationSetting.translationProvider.value}::${translationSetting.apiModel.value}';
 
   String _cacheBaseName(ReadPageInfo info, int index) {
     final String identity =
-        '${_galleryKey(info)}::$index::${translationSetting.sourceLanguage.value}::${translationSetting.targetLanguage.value}::${translationSetting.translationProvider.value}::${translationSetting.deepSeekModel.value}';
+        '${_galleryKey(info)}::$index::${translationSetting.sourceLanguage.value}::${translationSetting.targetLanguage.value}::${translationSetting.translationProvider.value}::${translationSetting.apiModel.value}';
     return sha256.convert(utf8.encode(identity)).toString();
   }
 

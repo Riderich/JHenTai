@@ -8,32 +8,35 @@
 
 ## 项目简介
 
-这是一个基于 [JHenTai](https://github.com/jiangtian616/JHenTai) 开发的实验性漫画图片翻译版本。项目把完整翻译流程接入阅读界面，目标是让用户找到日文漫画后，直接在软件内生成并阅读中文译图。
+这是一个基于 [JHenTai](https://github.com/jiangtian616/JHenTai) 开发的漫画图片翻译版本。项目把完整翻译流程接入阅读界面，让用户找到日文漫画后，直接在软件内生成并阅读中文译图。
 
-当前重点维护 **Windows x64 测试版**。安卓独立版仍在规划中；现阶段的 Release 不包含安卓翻译功能。
+当前正式支持 **Windows x64**。安卓独立版仍在规划中；现阶段的 Release 不包含安卓翻译功能。
 
-本项目仍处于 Alpha 阶段，并非 JHenTai 官方版本。使用中遇到的问题请提交到本仓库，不要向原版 JHenTai 报告本项目特有的问题。
+本项目是社区衍生版本，并非 JHenTai 官方版本。使用中遇到的问题请提交到本仓库，不要向原版 JHenTai 报告本项目特有的问题。
 
 ## 当前功能
 
 - 在阅读界面翻译当前页
+- Windows 阅读界面右键图片即可翻译、重新翻译或切换原图/译图
 - 手动设置起始页和结束页，串行翻译指定范围
 - 显示范围任务进度，并可在当前页完成后停止
 - 在原图与译图之间切换
 - 本地缓存已经完成的译图，避免重复消耗时间和 API
-- 在软件内配置 DeepSeek API Key 和模型
-- 默认使用 `deepseek-v4-flash`，明确关闭思考模式
+- 自定义 OpenAI 兼容 API 地址、API Key 和任意模型名称
+- DeepSeek 作为默认预设，也可连接其他云端服务或本机兼容接口
+- 可选择是否发送关闭思考参数
+- 支持 NLLB 600M / 1.3B 本地翻译，不需要 API Key
 - 软件内一键初始化 Windows 翻译环境
 - 自动准备 Python、隔离环境、检测/OCR/擦字依赖及默认模型
 - 初始化完成后由 JHenTai 自动启动本地翻译服务
 
 ## 下载
 
-请从 [Releases](https://github.com/Riderich/JHenTai-Image-Translation/releases) 下载最新的 Windows 预发布版。
+请从 [Releases](https://github.com/Riderich/JHenTai-Image-Translation/releases) 下载最新的 Windows 正式版。
 
-当前测试版：
+当前正式版：
 
-- [漫画图片翻译 v0.1.0 Alpha 2（一键初始化测试版）](https://github.com/Riderich/JHenTai-Image-Translation/releases/tag/v0.1.0-image-translation-alpha.2)
+- [JHenTai Image Translation v1.0.0](https://github.com/Riderich/JHenTai-Image-Translation/releases/tag/v1.0.0)
 
 下载后必须**完整解压**，不要直接在压缩包中运行程序。目录中的 `app`、`translation_service` 和 `translation_engine` 都是初始化所需内容。
 
@@ -44,11 +47,11 @@
 3. 点击 **初始化翻译环境**。
 4. 等待软件自动安装独立 Python 环境、图片处理依赖和默认模型。
 5. 初始化完成后，状态会变成“翻译服务已就绪”。
-6. 填写自己的 DeepSeek API Key，保存设置并测试连接。
+6. 选择自定义 API 或 NLLB 本地翻译。使用 API 时填写服务地址、Key 和模型名称，然后保存并测试连接。
 
 初始化预计下载约 **4–7 GB**，建议至少预留 **12 GB** 可用空间。网络速度、PyTorch 依赖和模型下载会显著影响耗时。下载中断后可以点击重试，已经下载或安装的内容会尽量复用。
 
-当前 Alpha 版默认采用 CPU 兼容模式。NVIDIA GPU 加速选择和更完整的安装恢复机制仍在开发中。
+初始化器会自动检测 NVIDIA 显卡。用户可以选择 CUDA 12.8 加速；驱动或运行时验证失败时会自动回退 CPU 兼容模式。
 
 ## 翻译漫画
 
@@ -66,13 +69,13 @@
 漫画原图
   → 本机文字区域检测
   → 本机日文 OCR
-  → DeepSeek API 翻译识别出的文字
+  → 自定义 API 或 NLLB 本地模型翻译识别出的文字
   → 本机擦除原文
   → 本机排版并嵌入中文
   → 缓存并显示完整译图
 ```
 
-图片处理通过本机 `127.0.0.1` 服务完成。DeepSeek API Key 保存在 JHenTai 的本机配置中，并随翻译请求传给本机服务；DeepSeek 接收需要翻译的文字。请勿把本项目的本地 HTTP 服务暴露到公网，也不要把自己的 Key 写入源码、日志或 Issue。
+图片处理通过本机 `127.0.0.1` 服务完成。API Key 保存在 JHenTai 的本机配置中，并随翻译请求传给本机服务；所选 API 服务商接收需要翻译的文字。本地 NLLB 模式不会调用翻译 API。请勿把本项目的本地 HTTP 服务暴露到公网，也不要把自己的 Key 写入源码、日志或 Issue。
 
 ## 资源消耗
 
@@ -80,18 +83,19 @@
 |---|---|---|
 | 初始化 | 网络、磁盘、CPU | 安装 Python/PyTorch 依赖并下载模型，耗时最长 |
 | 文字检测与 OCR | CPU、内存 | 当前测试版默认使用 CPU，漫画分辨率越高耗时越长 |
-| DeepSeek 翻译 | 网络、API 额度 | 只负责机器翻译，已关闭思考模式 |
+| 自定义 API 翻译 | 网络、API 额度 | 支持 OpenAI 兼容接口，思考开关由用户决定 |
+| NLLB 本地翻译 | CPU/GPU、内存/显存 | 无 API 成本；CUDA 设备建议使用更大的 1.3B 模型 |
 | 擦字与中文嵌字 | CPU、内存 | 在本机生成最终译图 |
 | 译图缓存 | 磁盘 | 已翻译页面会保存在 JHenTai 数据目录中 |
 
 ## 已知限制
 
-- 当前只发布 Windows x64 一键初始化测试包
+- 当前只发布 Windows x64 一键初始化包
 - 首次初始化下载量大，部分网络环境可能需要重试
-- 默认 CPU 模式速度较慢
+- 不支持 CUDA 的设备会使用 CPU 模式，处理速度较慢
 - Clash 系统代理、TUN/虚拟网卡或安全软件可能影响 Python、模型和 DeepSeek 连接
 - OCR、气泡检测、擦字与排版仍可能出现错误
-- DeepSeek Key 当前保存在本机应用配置中，尚未接入系统凭据保险库
+- API Key 当前保存在本机应用配置中，尚未接入系统凭据保险库
 - 安卓端需要独立的移动推理实现，不能直接把 Windows/Python 后端打包进 APK
 
 ## 开发状态

@@ -13,9 +13,11 @@ class TranslationSetting
     implements JHLifeCircleBean {
   RxString serviceUrl = 'http://127.0.0.1:5100'.obs;
   RxString apiToken = ''.obs;
-  RxString translationProvider = 'deepseek'.obs;
-  RxString deepSeekApiKey = ''.obs;
-  RxString deepSeekModel = 'deepseek-v4-flash'.obs;
+  RxString translationProvider = 'openai_compatible'.obs;
+  RxString apiBaseUrl = 'https://api.deepseek.com'.obs;
+  RxString apiKey = ''.obs;
+  RxString apiModel = 'deepseek-v4-flash'.obs;
+  RxBool disableThinking = true.obs;
   RxString sourceLanguage = 'auto'.obs;
   RxString targetLanguage = 'zh-CN'.obs;
   RxInt requestTimeoutSeconds = 300.obs;
@@ -28,10 +30,14 @@ class TranslationSetting
     final Map<String, dynamic> map = jsonDecode(configString);
     serviceUrl.value = map['serviceUrl'] ?? serviceUrl.value;
     apiToken.value = map['apiToken'] ?? apiToken.value;
-    translationProvider.value =
+    final String savedProvider =
         map['translationProvider'] ?? translationProvider.value;
-    deepSeekApiKey.value = map['deepSeekApiKey'] ?? deepSeekApiKey.value;
-    deepSeekModel.value = map['deepSeekModel'] ?? deepSeekModel.value;
+    translationProvider.value =
+        savedProvider == 'deepseek' ? 'openai_compatible' : savedProvider;
+    apiBaseUrl.value = map['apiBaseUrl'] ?? apiBaseUrl.value;
+    apiKey.value = map['apiKey'] ?? map['deepSeekApiKey'] ?? apiKey.value;
+    apiModel.value = map['apiModel'] ?? map['deepSeekModel'] ?? apiModel.value;
+    disableThinking.value = map['disableThinking'] ?? disableThinking.value;
     sourceLanguage.value = map['sourceLanguage'] ?? sourceLanguage.value;
     targetLanguage.value = map['targetLanguage'] ?? targetLanguage.value;
     requestTimeoutSeconds.value =
@@ -44,8 +50,10 @@ class TranslationSetting
       'serviceUrl': serviceUrl.value,
       'apiToken': apiToken.value,
       'translationProvider': translationProvider.value,
-      'deepSeekApiKey': deepSeekApiKey.value,
-      'deepSeekModel': deepSeekModel.value,
+      'apiBaseUrl': apiBaseUrl.value,
+      'apiKey': apiKey.value,
+      'apiModel': apiModel.value,
+      'disableThinking': disableThinking.value,
       'sourceLanguage': sourceLanguage.value,
       'targetLanguage': targetLanguage.value,
       'requestTimeoutSeconds': requestTimeoutSeconds.value,
@@ -62,8 +70,10 @@ class TranslationSetting
     required String serviceUrl,
     required String apiToken,
     required String translationProvider,
-    required String deepSeekApiKey,
-    required String deepSeekModel,
+    required String apiBaseUrl,
+    required String apiKey,
+    required String apiModel,
+    required bool disableThinking,
     required String sourceLanguage,
     required String targetLanguage,
     required int requestTimeoutSeconds,
@@ -71,8 +81,11 @@ class TranslationSetting
     this.serviceUrl.value = _normalizeServiceUrl(serviceUrl);
     this.apiToken.value = apiToken.trim();
     this.translationProvider.value = translationProvider;
-    this.deepSeekApiKey.value = deepSeekApiKey.trim();
-    this.deepSeekModel.value = deepSeekModel;
+    this.apiBaseUrl.value = _normalizeApiBaseUrl(apiBaseUrl);
+    this.apiKey.value = apiKey.trim();
+    this.apiModel.value =
+        apiModel.trim().isEmpty ? 'deepseek-v4-flash' : apiModel.trim();
+    this.disableThinking.value = disableThinking;
     this.sourceLanguage.value =
         sourceLanguage.trim().isEmpty ? 'auto' : sourceLanguage.trim();
     this.targetLanguage.value =
@@ -89,5 +102,13 @@ class TranslationSetting
       result = result.substring(0, result.length - 1);
     }
     return result.isEmpty ? 'http://127.0.0.1:5100' : result;
+  }
+
+  String _normalizeApiBaseUrl(String value) {
+    String result = value.trim();
+    while (result.endsWith('/')) {
+      result = result.substring(0, result.length - 1);
+    }
+    return result.isEmpty ? 'https://api.deepseek.com' : result;
   }
 }

@@ -1,39 +1,44 @@
 diff --git a/manga_translator/config.py b/manga_translator/config.py
-index 747b3e4..540ec3c 100644
+index 747b3e4..fe8294b 100644
 --- a/manga_translator/config.py
 +++ b/manga_translator/config.py
-@@ -223,0 +224,4 @@ class TranslatorConfig(BaseModel):
-+    deepseek_api_key: str = ''
-+    """DeepSeek API key supplied by the local client for this request."""
-+    deepseek_model: str = 'deepseek-v4-flash'
-+    """DeepSeek model used for this request."""
+@@ -223,0 +224,8 @@ class TranslatorConfig(BaseModel):
++    api_base_url: str = 'https://api.deepseek.com'
++    """OpenAI-compatible API base URL supplied by the local client."""
++    api_key: str = ''
++    """OpenAI-compatible API key supplied by the local client."""
++    api_model: str = 'deepseek-v4-flash'
++    """OpenAI-compatible model name used for this request."""
++    disable_thinking: bool = True
++    """Whether to send the provider-specific thinking disabled parameter."""
 diff --git a/manga_translator/translators/deepseek.py b/manga_translator/translators/deepseek.py
-index d62b386..c0fe10f 100644
+index d62b386..a91b4ba 100644
 --- a/manga_translator/translators/deepseek.py
 +++ b/manga_translator/translators/deepseek.py
-@@ -56,3 +56,3 @@ class DeepseekTranslator(CommonGPTTranslator):
+@@ -56,3 +56,4 @@ class DeepseekTranslator(CommonGPTTranslator):
 -        self.client = openai.AsyncOpenAI(api_key=openai.api_key or DEEPSEEK_API_KEY)
 -        if not self.client.api_key and check_openai_key:
 -            raise MissingAPIKeyException('DEEPSEEK_API_KEY environment variable required')
 +        api_key = openai.api_key or DEEPSEEK_API_KEY or 'not-configured'
 +        self.client = openai.AsyncOpenAI(api_key=api_key, base_url=DEEPSEEK_API_BASE)
 +        self.model = DEEPSEEK_MODEL
-@@ -60 +60,0 @@ class DeepseekTranslator(CommonGPTTranslator):
++        self.disable_thinking = True
+@@ -60 +61,0 @@ class DeepseekTranslator(CommonGPTTranslator):
 -        self.client.base_url = DEEPSEEK_API_BASE
-@@ -64,0 +63,8 @@ class DeepseekTranslator(CommonGPTTranslator):
+@@ -64,0 +64,7 @@ class DeepseekTranslator(CommonGPTTranslator):
 +    def parse_args(self, args: TranslatorConfig):
 +        super().parse_args(args)
-+        api_key = args.deepseek_api_key or DEEPSEEK_API_KEY
-+        if not api_key:
-+            raise MissingAPIKeyException('DeepSeek API key is required')
-+        self.model = args.deepseek_model or DEEPSEEK_MODEL
-+        self.client = openai.AsyncOpenAI(api_key=api_key, base_url=DEEPSEEK_API_BASE)
++        api_key = args.api_key or DEEPSEEK_API_KEY or 'not-configured'
++        self.model = args.api_model or DEEPSEEK_MODEL
++        self.disable_thinking = args.disable_thinking
++        self.client = openai.AsyncOpenAI(api_key=api_key, base_url=args.api_base_url or DEEPSEEK_API_BASE)
 +
 @@ -245 +251 @@ class DeepseekTranslator(CommonGPTTranslator):
 -            'model': DEEPSEEK_MODEL,
 +            'model': self.model,
-@@ -246,0 +253 @@ class DeepseekTranslator(CommonGPTTranslator):
-+            'extra_body': {'thinking': {'type': 'disabled'}},
+@@ -253,0 +260,2 @@ class DeepseekTranslator(CommonGPTTranslator):
++        if self.disable_thinking:
++            kwargs['extra_body'] = {'thinking': {'type': 'disabled'}}
 diff --git a/manga_translator/translators/keys.py b/manga_translator/translators/keys.py
 index c300a91..78fcbd1 100644
 --- a/manga_translator/translators/keys.py
