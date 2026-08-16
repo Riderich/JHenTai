@@ -1,0 +1,56 @@
+name: 问题报告
+description: 报告初始化、连接、翻译或界面异常
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: 请先确认使用最新正式版。不要粘贴 API Key、Cookie、访问令牌或私人漫画内容。
+  - type: input
+    id: version
+    attributes:
+      label: 软件版本
+      placeholder: 例如 v1.0.0
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: 系统与硬件
+      placeholder: 例如 Windows 11 24H2、i7-12700H、RTX 3060、16 GB 内存
+    validations:
+      required: true
+  - type: dropdown
+    id: translator
+    attributes:
+      label: 翻译方式
+      options:
+        - OpenAI 兼容 API
+        - NLLB 600M 本地模型
+        - NLLB 1.3B 本地模型
+        - 尚未进入翻译步骤
+        - 其他
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      placeholder: 按顺序说明点击了什么、预期结果和实际结果。
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 错误信息
+      description: 仅粘贴已删除凭据和隐私内容的相关片段。
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 我已使用最新正式版重试。
+          required: true
+        - label: 我已删除 API Key、Cookie、令牌及隐私内容。
+          required: true

@@ -10,7 +10,7 @@ coupled to Qt application state and does not expose a supported headless API.
 Keeping this adapter boundary means a Comic Translate backend can be added
 later without changing the Flutter client.
 
-## Windows test release
+## Windows release
 
 Extract the complete release archive, run `app/jhentai.exe`, then open
 **Settings > Image translation** and click **Initialize translation runtime**.
@@ -56,10 +56,11 @@ The adapter uses the following environment variables:
 | `JHENTAI_MT_TIMEOUT` | `300` | Upstream timeout in seconds |
 | `JHENTAI_TRANSLATION_TOKEN` | empty | Optional bearer token required from JHenTai |
 
-The current test client supports DeepSeek directly. The API key and model are
-configured in JHenTai and sent only to the local adapter/engine for each
-request. Thinking mode is explicitly disabled. Do not expose either local
-HTTP service to the public internet.
+The client supports configurable OpenAI-compatible endpoints, including a
+DeepSeek preset, as well as local NLLB models. The API URL, key, model and
+thinking option are configured in JHenTai and sent only to the local
+adapter/engine for each request. Do not expose either local HTTP service to
+the public internet.
 
 ## HTTP contract
 

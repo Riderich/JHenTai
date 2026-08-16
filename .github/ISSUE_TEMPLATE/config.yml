@@ -1,6 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Others
-    url: https://github.com/jiangtian616/JHenTai/discussions/new/choose
-    about: | 
-      其余问题请移步至讨论区 / Go to discussion for other questions
+  - name: 下载最新正式版
+    url: https://github.com/Riderich/JHenTai-Image-Translation/releases/latest
+    about: 报告问题前请先升级并重试。
+  - name: 上游 JHenTai
+    url: https://github.com/jiangtian616/JHenTai
+    about: 仅用于确认与图片翻译无关的原版问题；不要向上游报告本仓库特有问题。

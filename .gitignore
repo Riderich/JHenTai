@@ -31,6 +31,7 @@
 .pub/
 /build/
 /translation_service/.venv/
+/release/
 pubspec.lock
 
 # Web related

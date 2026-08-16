@@ -3,8 +3,11 @@
 > 在 JHenTai 阅读器中直接完成漫画文字检测、日文 OCR、机器翻译、原文擦除和中文嵌字。
 
 [![Windows](https://img.shields.io/badge/Windows-x64-0078D4?logo=windows)](https://github.com/Riderich/JHenTai-Image-Translation/releases)
-[![Release](https://img.shields.io/github/v/release/Riderich/JHenTai-Image-Translation?include_prereleases)](https://github.com/Riderich/JHenTai-Image-Translation/releases)
+[![Release](https://img.shields.io/github/v/release/Riderich/JHenTai-Image-Translation)](https://github.com/Riderich/JHenTai-Image-Translation/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/Riderich/JHenTai-Image-Translation/total)](https://github.com/Riderich/JHenTai-Image-Translation/releases)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue)](LICENSE)
+
+[下载 Windows 正式版](https://github.com/Riderich/JHenTai-Image-Translation/releases/latest) · [报告问题](https://github.com/Riderich/JHenTai-Image-Translation/issues/new/choose) · [查看更新记录](https://github.com/Riderich/JHenTai-Image-Translation/releases)
 
 ## 项目简介
 
@@ -58,7 +61,7 @@
 1. 在 JHenTai 中打开一本漫画并进入阅读界面。
 2. 打开顶部菜单，点击翻译图标。
 3. 选择 **翻译当前页**，或者选择 **翻译页面范围…**。
-4. 等待检测、OCR、DeepSeek 翻译、擦字和中文嵌字完成。
+4. 等待检测、OCR、所选翻译模型、擦字和中文嵌字完成。
 5. 使用菜单中的 **显示原图/显示译图** 检查效果。
 
 范围翻译每次只处理一页，避免同时占用过多内存、显存和 API 请求。已经成功缓存的页面会自动跳过。
@@ -82,7 +85,7 @@
 | 阶段 | 主要资源 | 说明 |
 |---|---|---|
 | 初始化 | 网络、磁盘、CPU | 安装 Python/PyTorch 依赖并下载模型，耗时最长 |
-| 文字检测与 OCR | CPU、内存 | 当前测试版默认使用 CPU，漫画分辨率越高耗时越长 |
+| 文字检测与 OCR | CPU/GPU、内存/显存 | 可用 CUDA 时可启用 GPU；漫画分辨率越高耗时越长 |
 | 自定义 API 翻译 | 网络、API 额度 | 支持 OpenAI 兼容接口，思考开关由用户决定 |
 | NLLB 本地翻译 | CPU/GPU、内存/显存 | 无 API 成本；CUDA 设备建议使用更大的 1.3B 模型 |
 | 擦字与中文嵌字 | CPU、内存 | 在本机生成最终译图 |
@@ -93,14 +96,18 @@
 - 当前只发布 Windows x64 一键初始化包
 - 首次初始化下载量大，部分网络环境可能需要重试
 - 不支持 CUDA 的设备会使用 CPU 模式，处理速度较慢
-- Clash 系统代理、TUN/虚拟网卡或安全软件可能影响 Python、模型和 DeepSeek 连接
+- Clash 系统代理、TUN/虚拟网卡或安全软件可能影响 Python、模型和 API 服务连接
 - OCR、气泡检测、擦字与排版仍可能出现错误
 - API Key 当前保存在本机应用配置中，尚未接入系统凭据保险库
 - 安卓端需要独立的移动推理实现，不能直接把 Windows/Python 后端打包进 APK
 
-## 开发状态
+## 问题反馈与参与开发
 
-主要开发分支：`feature/image-translation`
+遇到初始化、连接或翻译问题时，请使用仓库的 [Issue 模板](https://github.com/Riderich/JHenTai-Image-Translation/issues/new/choose)，并附上 Windows 版本、软件版本、CPU/GPU、翻译方式及可公开的错误信息。请先删除 API Key、Cookie、访问令牌和漫画图片中的隐私内容。
+
+如果希望贡献代码，请先阅读 [贡献指南](CONTRIBUTING.md)；安全问题请按照 [安全说明](SECURITY.md) 私下报告。
+
+稳定分支：`main`。功能开发分支：`feature/image-translation`。
 
 本地构建 Windows 版：
 
@@ -117,7 +124,7 @@ translation_service/manga-image-translator.patch
 
 ## 上游项目与致谢
 
-本仓库是在以下开源项目基础上进行的实验性开发：
+本仓库是在以下开源项目基础上进行的社区衍生开发：
 
 - [JHenTai](https://github.com/jiangtian616/JHenTai)：跨平台 E-Hentai/ExHentai 客户端与阅读器界面
 - [manga-image-translator](https://github.com/zyddnys/manga-image-translator)：文字检测、OCR、翻译、擦字和嵌字流程
