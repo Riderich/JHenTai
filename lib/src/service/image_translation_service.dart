@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:get/get.dart';
 import 'package:path/path.dart' as path;
 
@@ -116,29 +116,32 @@ class ImageTranslationService extends GetxController
       final Duration timeout = Duration(
         seconds: translationSetting.requestTimeoutSeconds.value,
       );
-      final Dio client = Dio(
-        BaseOptions(
+      final dio.Dio client = dio.Dio(
+        dio.BaseOptions(
           connectTimeout: const Duration(seconds: 10),
           sendTimeout: timeout,
           receiveTimeout: timeout,
-          responseType: ResponseType.bytes,
+          responseType: dio.ResponseType.bytes,
           headers: {
             if (translationSetting.apiToken.value.isNotEmpty)
               'Authorization': 'Bearer ${translationSetting.apiToken.value}',
           },
         ),
       );
-      final FormData body = FormData.fromMap({
-        'image': MultipartFile.fromBytes(imageBytes, filename: fileName),
+      final dio.FormData body = dio.FormData.fromMap({
+        'image': dio.MultipartFile.fromBytes(imageBytes, filename: fileName),
         'gallery_id': _galleryKey(info),
         'page_index': index,
         'source_language': translationSetting.sourceLanguage.value,
         'target_language': translationSetting.targetLanguage.value,
+        'translation_provider': translationSetting.translationProvider.value,
+        'deepseek_api_key': translationSetting.deepSeekApiKey.value,
+        'deepseek_model': translationSetting.deepSeekModel.value,
       });
-      final Response<List<int>> response = await client.post<List<int>>(
+      final dio.Response<List<int>> response = await client.post<List<int>>(
         '${translationSetting.serviceUrl.value}/v1/translate',
         data: body,
-        options: Options(responseType: ResponseType.bytes),
+        options: dio.Options(responseType: dio.ResponseType.bytes),
       );
       final List<int>? translatedBytes = response.data;
       if (translatedBytes == null || translatedBytes.isEmpty) {
@@ -146,7 +149,7 @@ class ImageTranslationService extends GetxController
       }
 
       final String extension = _extensionFromContentType(
-        response.headers.value(Headers.contentTypeHeader),
+        response.headers.value(dio.Headers.contentTypeHeader),
       );
       final String relativePath = _cacheRelativePath(info, index, extension);
       final File output = File(
@@ -173,14 +176,19 @@ class ImageTranslationService extends GetxController
 
   Future<bool> testConnection() async {
     try {
-      final Dio client = Dio(
-        BaseOptions(
+      final dio.Dio client = dio.Dio(
+        dio.BaseOptions(
           connectTimeout: const Duration(seconds: 5),
-          receiveTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 30),
         ),
       );
-      final Response response = await client.get(
-        '${translationSetting.serviceUrl.value}/health',
+      final dio.Response response = await client.post(
+        '${translationSetting.serviceUrl.value}/v1/test',
+        data: dio.FormData.fromMap({
+          'translation_provider': translationSetting.translationProvider.value,
+          'deepseek_api_key': translationSetting.deepSeekApiKey.value,
+          'deepseek_model': translationSetting.deepSeekModel.value,
+        }),
       );
       return response.statusCode != null &&
           response.statusCode! >= 200 &&
@@ -211,11 +219,11 @@ class ImageTranslationService extends GetxController
   }
 
   String _pageKey(ReadPageInfo info, int index) =>
-      '${_galleryKey(info)}::$index::${translationSetting.targetLanguage.value}';
+      '${_galleryKey(info)}::$index::${translationSetting.targetLanguage.value}::${translationSetting.translationProvider.value}::${translationSetting.deepSeekModel.value}';
 
   String _cacheBaseName(ReadPageInfo info, int index) {
     final String identity =
-        '${_galleryKey(info)}::$index::${translationSetting.sourceLanguage.value}::${translationSetting.targetLanguage.value}';
+        '${_galleryKey(info)}::$index::${translationSetting.sourceLanguage.value}::${translationSetting.targetLanguage.value}::${translationSetting.translationProvider.value}::${translationSetting.deepSeekModel.value}';
     return sha256.convert(utf8.encode(identity)).toString();
   }
 

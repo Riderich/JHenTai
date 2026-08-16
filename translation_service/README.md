@@ -12,10 +12,17 @@ later without changing the Flutter client.
 
 ## Windows development setup
 
-1. Install and start `manga-image-translator` in API/web mode on
-   `http://127.0.0.1:8000` by following its upstream instructions. From its
-   repository root, the CPU command is `python server/main.py`; add
-   `--use-gpu` when its CUDA dependencies are installed.
+1. Clone `manga-image-translator`, then apply the compatibility patch shipped
+   in this directory:
+
+   ```powershell
+   git apply --unidiff-zero ..\JHenTai\translation_service\manga-image-translator.patch
+   ```
+
+   Install its dependencies and start it in API/web mode on
+   `http://127.0.0.1:8000`. From its repository root, the CPU command is
+   `python server/main.py`; add `--use-gpu` when its CUDA dependencies are
+   installed.
 2. Open PowerShell in this directory and run:
 
    ```powershell
@@ -40,10 +47,10 @@ The adapter uses the following environment variables:
 | `JHENTAI_MT_TIMEOUT` | `300` | Upstream timeout in seconds |
 | `JHENTAI_TRANSLATION_TOKEN` | empty | Optional bearer token required from JHenTai |
 
-For an OpenAI-compatible LLM backend, configure the upstream
-`manga-image-translator` installation and set `JHENTAI_MT_TRANSLATOR` to
-`custom_openai` (or `chatgpt`) as appropriate. API keys stay in the local
-engine environment; JHenTai only sends the page image to localhost.
+The current test client supports DeepSeek directly. The API key and model are
+configured in JHenTai and sent only to the local adapter/engine for each
+request. Thinking mode is explicitly disabled. Do not expose either local
+HTTP service to the public internet.
 
 ## HTTP contract
 

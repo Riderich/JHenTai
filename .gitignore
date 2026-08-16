@@ -30,6 +30,7 @@
 .pub-cache/
 .pub/
 /build/
+/translation_service/.venv/
 pubspec.lock
 
 # Web related

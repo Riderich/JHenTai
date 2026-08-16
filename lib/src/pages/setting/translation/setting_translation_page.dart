@@ -16,10 +16,13 @@ class SettingTranslationPage extends StatefulWidget {
 class _SettingTranslationPageState extends State<SettingTranslationPage> {
   late final TextEditingController serviceUrlController;
   late final TextEditingController apiTokenController;
+  late final TextEditingController deepSeekApiKeyController;
   late final TextEditingController sourceLanguageController;
   late final TextEditingController targetLanguageController;
   late final TextEditingController timeoutController;
   bool testing = false;
+  late String translationProvider;
+  late String deepSeekModel;
 
   @override
   void initState() {
@@ -30,6 +33,11 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
     apiTokenController = TextEditingController(
       text: translationSetting.apiToken.value,
     );
+    deepSeekApiKeyController = TextEditingController(
+      text: translationSetting.deepSeekApiKey.value,
+    );
+    translationProvider = translationSetting.translationProvider.value;
+    deepSeekModel = translationSetting.deepSeekModel.value;
     sourceLanguageController = TextEditingController(
       text: translationSetting.sourceLanguage.value,
     );
@@ -45,6 +53,7 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
   void dispose() {
     serviceUrlController.dispose();
     apiTokenController.dispose();
+    deepSeekApiKeyController.dispose();
     sourceLanguageController.dispose();
     targetLanguageController.dispose();
     timeoutController.dispose();
@@ -55,6 +64,9 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
     await translationSetting.save(
       serviceUrl: serviceUrlController.text,
       apiToken: apiTokenController.text,
+      translationProvider: translationProvider,
+      deepSeekApiKey: deepSeekApiKeyController.text,
+      deepSeekModel: deepSeekModel,
       sourceLanguage: sourceLanguageController.text,
       targetLanguage: targetLanguageController.text,
       requestTimeoutSeconds: int.tryParse(timeoutController.text) ?? 300,
@@ -103,6 +115,64 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
                 border: const OutlineInputBorder(),
               ),
             ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              initialValue: translationProvider,
+              decoration: InputDecoration(
+                labelText: 'translationProvider'.tr,
+                border: const OutlineInputBorder(),
+              ),
+              items: [
+                DropdownMenuItem(
+                  value: 'deepseek',
+                  child: Text('deepSeekApi'.tr),
+                ),
+                DropdownMenuItem(
+                  value: 'sugoi',
+                  child: Text('sugoiLocal'.tr),
+                ),
+              ],
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() => translationProvider = value);
+                }
+              },
+            ),
+            if (translationProvider == 'deepseek') ...[
+              const SizedBox(height: 16),
+              TextField(
+                controller: deepSeekApiKeyController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'deepSeekApiKey'.tr,
+                  helperText: 'deepSeekApiKeyHint'.tr,
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                initialValue: deepSeekModel,
+                decoration: InputDecoration(
+                  labelText: 'deepSeekModel'.tr,
+                  border: const OutlineInputBorder(),
+                ),
+                items: const [
+                  DropdownMenuItem(
+                    value: 'deepseek-v4-flash',
+                    child: Text('DeepSeek V4 Flash'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'deepseek-v4-pro',
+                    child: Text('DeepSeek V4 Pro'),
+                  ),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() => deepSeekModel = value);
+                  }
+                },
+              ),
+            ],
             const SizedBox(height: 16),
             Row(
               children: [

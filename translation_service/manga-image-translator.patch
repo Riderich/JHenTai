@@ -1,0 +1,63 @@
+diff --git a/manga_translator/config.py b/manga_translator/config.py
+index 747b3e4..540ec3c 100644
+--- a/manga_translator/config.py
++++ b/manga_translator/config.py
+@@ -223,0 +224,4 @@ class TranslatorConfig(BaseModel):
++    deepseek_api_key: str = ''
++    """DeepSeek API key supplied by the local client for this request."""
++    deepseek_model: str = 'deepseek-v4-flash'
++    """DeepSeek model used for this request."""
+diff --git a/manga_translator/translators/deepseek.py b/manga_translator/translators/deepseek.py
+index d62b386..c0fe10f 100644
+--- a/manga_translator/translators/deepseek.py
++++ b/manga_translator/translators/deepseek.py
+@@ -56,3 +56,3 @@ class DeepseekTranslator(CommonGPTTranslator):
+-        self.client = openai.AsyncOpenAI(api_key=openai.api_key or DEEPSEEK_API_KEY)
+-        if not self.client.api_key and check_openai_key:
+-            raise MissingAPIKeyException('DEEPSEEK_API_KEY environment variable required')
++        api_key = openai.api_key or DEEPSEEK_API_KEY or 'not-configured'
++        self.client = openai.AsyncOpenAI(api_key=api_key, base_url=DEEPSEEK_API_BASE)
++        self.model = DEEPSEEK_MODEL
+@@ -60 +60,0 @@ class DeepseekTranslator(CommonGPTTranslator):
+-        self.client.base_url = DEEPSEEK_API_BASE
+@@ -64,0 +63,8 @@ class DeepseekTranslator(CommonGPTTranslator):
++    def parse_args(self, args: TranslatorConfig):
++        super().parse_args(args)
++        api_key = args.deepseek_api_key or DEEPSEEK_API_KEY
++        if not api_key:
++            raise MissingAPIKeyException('DeepSeek API key is required')
++        self.model = args.deepseek_model or DEEPSEEK_MODEL
++        self.client = openai.AsyncOpenAI(api_key=api_key, base_url=DEEPSEEK_API_BASE)
++
+@@ -245 +251 @@ class DeepseekTranslator(CommonGPTTranslator):
+-            'model': DEEPSEEK_MODEL,
++            'model': self.model,
+@@ -246,0 +253 @@ class DeepseekTranslator(CommonGPTTranslator):
++            'extra_body': {'thinking': {'type': 'disabled'}},
+diff --git a/manga_translator/translators/keys.py b/manga_translator/translators/keys.py
+index c300a91..78fcbd1 100644
+--- a/manga_translator/translators/keys.py
++++ b/manga_translator/translators/keys.py
+@@ -39 +39 @@ DEEPSEEK_API_BASE  = os.getenv('DEEPSEEK_API_BASE', 'https://api.deepseek.com')
+-DEEPSEEK_MODEL  = os.getenv('DEEPSEEK_MODEL', 'deepseek-chat') # Or: "deepseek-reasoner"
++DEEPSEEK_MODEL  = os.getenv('DEEPSEEK_MODEL', 'deepseek-v4-flash')
+diff --git a/manga_translator/utils/inference.py b/manga_translator/utils/inference.py
+index b0ee93e..6c0ee48 100644
+--- a/manga_translator/utils/inference.py
++++ b/manga_translator/utils/inference.py
+@@ -94 +94 @@ class ModelWrapper(ABC):
+-    _MODEL_DIR = os.path.join(BASE_PATH, 'models')
++    _MODEL_DIR = os.getenv('MT_MODEL_DIR', os.path.join(BASE_PATH, 'models'))
+diff --git a/server/sent_data_internal.py b/server/sent_data_internal.py
+index a19096c..24cfc08 100644
+--- a/server/sent_data_internal.py
++++ b/server/sent_data_internal.py
+@@ -1 +0,0 @@
+-import json
+@@ -32,3 +31,3 @@ async def fetch_data(url, image: Image, config: Config, headers: Mapping[str, st
+-                    return json.loads(await response.text())
+-                except json.JSONDecodeError:
+-                    raise HTTPException(502, detail='Invalid JSON response from upstream')
++                    return pickle.loads(await response.read())
++                except pickle.UnpicklingError as exc:
++                    raise HTTPException(502, detail='Invalid pickle response from upstream') from exc
