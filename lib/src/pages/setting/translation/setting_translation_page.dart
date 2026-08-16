@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../service/image_translation_service.dart';
+import '../../../service/translation_runtime_service.dart';
 import '../../../setting/translation_setting.dart';
 import '../../../utils/toast_util.dart';
 
@@ -27,6 +28,7 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
   @override
   void initState() {
     super.initState();
+    translationRuntimeService.refreshRuntime();
     serviceUrlController = TextEditingController(
       text: translationSetting.serviceUrl.value,
     );
@@ -99,6 +101,77 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
           children: [
             Text('translationServiceHint'.tr),
             const SizedBox(height: 20),
+            if (GetPlatform.isWindows) ...[
+              GetBuilder<TranslationRuntimeService>(
+                init: translationRuntimeService,
+                id: TranslationRuntimeService.updateId,
+                builder: (runtime) => Card(
+                  margin: EdgeInsets.zero,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              runtime.status == TranslationRuntimeStatus.ready
+                                  ? Icons.check_circle
+                                  : runtime.status ==
+                                          TranslationRuntimeStatus.error
+                                      ? Icons.error_outline
+                                      : Icons.downloading_outlined,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                'translationRuntimeTitle'.tr,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(runtime.message),
+                        if (runtime.isBusy) ...[
+                          const SizedBox(height: 12),
+                          LinearProgressIndicator(
+                              value: runtime.progress > 0
+                                  ? runtime.progress / 100
+                                  : null),
+                          const SizedBox(height: 6),
+                          Text('${runtime.progress}%'),
+                        ],
+                        const SizedBox(height: 12),
+                        FilledButton.icon(
+                          onPressed: runtime.isBusy
+                              ? null
+                              : runtime.isInitialized
+                                  ? runtime.start
+                                  : runtime.initialize,
+                          icon: Icon(runtime.isInitialized
+                              ? Icons.play_arrow
+                              : Icons.download),
+                          label: Text(
+                            runtime.isInitialized
+                                ? 'startTranslationRuntime'.tr
+                                : 'initializeTranslationRuntime'.tr,
+                          ),
+                        ),
+                        if (!runtime.isInitialized) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            'translationRuntimeSizeHint'.tr,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
             TextField(
               controller: serviceUrlController,
               decoration: InputDecoration(

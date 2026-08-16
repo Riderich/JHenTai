@@ -10,7 +10,16 @@ coupled to Qt application state and does not expose a supported headless API.
 Keeping this adapter boundary means a Comic Translate backend can be added
 later without changing the Flutter client.
 
-## Windows development setup
+## Windows test release
+
+Extract the complete release archive, run `app/jhentai.exe`, then open
+**Settings > Image translation** and click **Initialize translation runtime**.
+JHenTai installs an isolated Python runtime, engine dependencies, and the
+default detection/OCR/inpainting models under its application data directory.
+No terminal commands are required. Existing downloads are reused after an
+interruption or retry.
+
+## Manual development setup
 
 1. Clone `manga-image-translator`, then apply the compatibility patch shipped
    in this directory:
