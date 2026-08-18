@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -65,7 +65,7 @@ jobs:
           mv "JHenTai-Image-Translation-${VERSION}-ios-unsigned.ipa" "$GITHUB_WORKSPACE/"
 
       - name: Upload unsigned IPA
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: JHenTai-Image-Translation-iOS-unsigned
           path: JHenTai-Image-Translation-*-ios-unsigned.ipa
