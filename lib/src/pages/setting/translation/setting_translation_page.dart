@@ -89,6 +89,13 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
   }
 
   Future<void> testConnection() async {
+    final Uri? apiUri = Uri.tryParse(apiBaseUrlController.text.trim());
+    if (apiKeyController.text.trim().isEmpty &&
+        (apiUri?.host == 'api.deepseek.com' ||
+            apiUri?.host.endsWith('.deepseek.com') == true)) {
+      toast('translationApiKeyRequired'.tr, isShort: false);
+      return;
+    }
     await save();
     setState(() => testing = true);
     final bool success = await imageTranslationService.testConnection();

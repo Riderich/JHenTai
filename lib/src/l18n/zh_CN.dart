@@ -86,6 +86,7 @@ class zh_CN {
       'saveTranslationSettings': '保存设置',
       'testConnection': '测试连接',
       'translationServiceConnected': '翻译连接成功',
+      'translationApiKeyRequired': '使用 DeepSeek 时请先填写 API Key 并保存',
       'translationServiceUnavailable': '无法连接翻译服务，请检查网络、API 地址、Key 和模型名称',
       'clearTranslationCache': '清除译图缓存',
       'translationCacheCleared': '译图缓存已清除',

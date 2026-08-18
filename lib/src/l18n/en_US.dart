@@ -95,6 +95,8 @@ class en_US {
       'saveTranslationSettings': 'Save settings',
       'testConnection': 'Test connection',
       'translationServiceConnected': 'Translation connection succeeded',
+      'translationApiKeyRequired':
+          'Enter and save an API key before using DeepSeek.',
       'translationServiceUnavailable':
           'Unable to connect. Check the network, API URL, key, and model name.',
       'clearTranslationCache': 'Clear translated image cache',
