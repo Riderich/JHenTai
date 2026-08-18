@@ -49,6 +49,11 @@ class zh_CN {
       'androidNativeTranslation': '安卓独立翻译（实验版）',
       'androidNativeTranslationHint':
           '使用内置日文 OCR、手机端擦字与中文嵌字。当前版本需要 OpenAI 兼容翻译 API。',
+      'mobileTranslationServiceHint':
+          '移动端完全在手机上运行：内置日文 OCR 和图片排版，只把识别出的文字发送给你选择的 API，不需要电脑或本地服务。',
+      'mobileNativeTranslation': '手机独立翻译',
+      'mobileNativeTranslationHint':
+          '使用系统端日文 OCR、手机端擦字与中文嵌字，需要 OpenAI 兼容翻译 API。',
       'translationRuntimeTitle': '本机翻译环境',
       'initializeTranslationRuntime': '初始化翻译环境',
       'startTranslationRuntime': '启动翻译服务',

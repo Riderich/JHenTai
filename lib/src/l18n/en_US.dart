@@ -51,6 +51,11 @@ class en_US {
           'Android standalone translation (experimental)',
       'androidNativeTranslationHint':
           'Uses bundled Japanese OCR, on-device text removal, and Chinese typesetting. This version requires an OpenAI-compatible translation API.',
+      'mobileTranslationServiceHint':
+          'Mobile translation runs entirely on the phone. Japanese OCR and image rendering stay on-device; only recognized text is sent to your API. No PC or local service is required.',
+      'mobileNativeTranslation': 'Standalone mobile translation',
+      'mobileNativeTranslationHint':
+          'Uses platform Japanese OCR, on-device text removal, and Chinese typesetting. An OpenAI-compatible translation API is required.',
       'translationRuntimeTitle': 'Local translation runtime',
       'initializeTranslationRuntime': 'Initialize translation runtime',
       'startTranslationRuntime': 'Start translation service',

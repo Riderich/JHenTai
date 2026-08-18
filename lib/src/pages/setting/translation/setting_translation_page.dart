@@ -27,6 +27,8 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
   late String translationProvider;
   late bool disableThinking;
 
+  bool get isStandaloneMobile => GetPlatform.isAndroid || GetPlatform.isIOS;
+
   @override
   void initState() {
     super.initState();
@@ -44,7 +46,7 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
     apiModelController =
         TextEditingController(text: translationSetting.apiModel.value);
     translationProvider = translationSetting.translationProvider.value;
-    if (GetPlatform.isAndroid) {
+    if (isStandaloneMobile) {
       translationProvider = 'openai_compatible';
     }
     disableThinking = translationSetting.disableThinking.value;
@@ -118,8 +120,8 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            Text(GetPlatform.isAndroid
-                ? 'androidTranslationServiceHint'.tr
+            Text(isStandaloneMobile
+                ? 'mobileTranslationServiceHint'.tr
                 : 'translationServiceHint'.tr),
             const SizedBox(height: 20),
             if (GetPlatform.isWindows) ...[
@@ -202,7 +204,7 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
               ),
               const SizedBox(height: 20),
             ],
-            if (!GetPlatform.isAndroid) ...[
+            if (!isStandaloneMobile) ...[
               TextField(
                 controller: serviceUrlController,
                 decoration: InputDecoration(
@@ -250,9 +252,11 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
               Card(
                 margin: EdgeInsets.zero,
                 child: ListTile(
-                  leading: const Icon(Icons.phone_android),
-                  title: Text('androidNativeTranslation'.tr),
-                  subtitle: Text('androidNativeTranslationHint'.tr),
+                  leading: Icon(GetPlatform.isIOS
+                      ? Icons.phone_iphone
+                      : Icons.phone_android),
+                  title: Text('mobileNativeTranslation'.tr),
+                  subtitle: Text('mobileNativeTranslationHint'.tr),
                 ),
               ),
             ],

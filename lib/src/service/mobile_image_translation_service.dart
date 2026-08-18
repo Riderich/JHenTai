@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 
 import '../setting/translation_setting.dart';
 
-class AndroidImageTranslationService {
+class MobileImageTranslationService {
   static const MethodChannel _channel = MethodChannel(
     'top.jtmonster.jhentai.image_translation',
   );
@@ -35,7 +35,7 @@ class AndroidImageTranslationService {
       },
     );
     if (rendered == null || rendered.isEmpty) {
-      throw StateError('Android renderer returned an empty image');
+      throw StateError('Mobile renderer returned an empty image');
     }
     return rendered;
   }

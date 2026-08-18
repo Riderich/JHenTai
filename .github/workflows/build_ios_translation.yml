@@ -1,0 +1,73 @@
+name: Build iOS Translation
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/ios-image-translation
+    paths:
+      - .github/workflows/build_ios_translation.yml
+      - ios/**
+      - lib/**
+      - pubspec.yaml
+      - thin-payload.sh
+
+concurrency:
+  group: ios-translation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-ios:
+    name: Unsigned iOS IPA
+    runs-on: macos-latest
+    timeout-minutes: 60
+    env:
+      FLUTTER_VERSION: 3.44.8
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Resolve Flutter dependencies
+        run: flutter pub get
+
+      - name: Install CocoaPods dependencies
+        working-directory: ios
+        run: pod install --repo-update
+
+      - name: Analyze Dart integration
+        run: >-
+          flutter analyze --no-pub
+          lib/src/service/mobile_image_translation_service.dart
+          lib/src/service/image_translation_service.dart
+          lib/src/pages/setting/translation/setting_translation_page.dart
+
+      - name: Build unsigned iOS app
+        run: flutter build ios --release --no-codesign --no-pub -t lib/src/main.dart
+
+      - name: Package unsigned IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION=$(awk '/^version:/ {print $2}' pubspec.yaml)
+          PACKAGE_DIR="$RUNNER_TEMP/jhentai-ios"
+          mkdir -p "$PACKAGE_DIR/Payload"
+          cp -R build/ios/iphoneos/Runner.app "$PACKAGE_DIR/Payload/"
+          cd "$PACKAGE_DIR"
+          /usr/bin/zip -qry "JHenTai-Image-Translation-${VERSION}-ios-unsigned.ipa" Payload
+          mv "JHenTai-Image-Translation-${VERSION}-ios-unsigned.ipa" "$GITHUB_WORKSPACE/"
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: JHenTai-Image-Translation-iOS-unsigned
+          path: JHenTai-Image-Translation-*-ios-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 14

@@ -16,7 +16,7 @@ import 'jh_service.dart';
 import 'log.dart';
 import 'path_service.dart';
 import 'translation_runtime_service.dart';
-import 'android_image_translation_service.dart';
+import 'mobile_image_translation_service.dart';
 
 enum ImageTranslationStatus { idle, translating, success, error }
 
@@ -61,7 +61,9 @@ class ImageTranslationService extends GetxController
 
   @override
   Future<void> doAfterBeanReady() async {
-    unawaited(translationRuntimeService.startIfInitialized());
+    if (GetPlatform.isWindows) {
+      unawaited(translationRuntimeService.startIfInitialized());
+    }
   }
 
   String updateId(ReadPageInfo info, int index) =>
@@ -118,9 +120,9 @@ class ImageTranslationService extends GetxController
     update([updateId(info, index)]);
 
     try {
-      if (GetPlatform.isAndroid) {
+      if (GetPlatform.isAndroid || GetPlatform.isIOS) {
         final Uint8List translatedBytes =
-            await AndroidImageTranslationService().translate(imageBytes);
+            await MobileImageTranslationService().translate(imageBytes);
         await _cacheTranslatedBytes(
           info: info,
           index: index,
@@ -192,8 +194,8 @@ class ImageTranslationService extends GetxController
 
   Future<bool> testConnection() async {
     try {
-      if (GetPlatform.isAndroid) {
-        return await AndroidImageTranslationService().testConnection();
+      if (GetPlatform.isAndroid || GetPlatform.isIOS) {
+        return await MobileImageTranslationService().testConnection();
       }
       final dio.Dio client = dio.Dio(
         dio.BaseOptions(
