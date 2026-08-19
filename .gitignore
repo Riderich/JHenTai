@@ -30,6 +30,7 @@
 .pub-cache/
 .pub/
 /build/
+/android/build/
 /translation_service/.venv/
 /release/
 pubspec.lock

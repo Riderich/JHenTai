@@ -44,6 +44,9 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
     apiModelController =
         TextEditingController(text: translationSetting.apiModel.value);
     translationProvider = translationSetting.translationProvider.value;
+    if (GetPlatform.isAndroid) {
+      translationProvider = 'openai_compatible';
+    }
     disableThinking = translationSetting.disableThinking.value;
     sourceLanguageController = TextEditingController(
       text: translationSetting.sourceLanguage.value,
@@ -86,6 +89,13 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
   }
 
   Future<void> testConnection() async {
+    final Uri? apiUri = Uri.tryParse(apiBaseUrlController.text.trim());
+    if (apiKeyController.text.trim().isEmpty &&
+        (apiUri?.host == 'api.deepseek.com' ||
+            apiUri?.host.endsWith('.deepseek.com') == true)) {
+      toast('translationApiKeyRequired'.tr, isShort: false);
+      return;
+    }
     await save();
     setState(() => testing = true);
     final bool success = await imageTranslationService.testConnection();
@@ -108,7 +118,9 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            Text('translationServiceHint'.tr),
+            Text(GetPlatform.isAndroid
+                ? 'androidTranslationServiceHint'.tr
+                : 'translationServiceHint'.tr),
             const SizedBox(height: 20),
             if (GetPlatform.isWindows) ...[
               GetBuilder<TranslationRuntimeService>(
@@ -190,49 +202,60 @@ class _SettingTranslationPageState extends State<SettingTranslationPage> {
               ),
               const SizedBox(height: 20),
             ],
-            TextField(
-              controller: serviceUrlController,
-              decoration: InputDecoration(
-                labelText: 'translationServiceUrl'.tr,
-                border: const OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: apiTokenController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'translationApiToken'.tr,
-                border: const OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              initialValue: translationProvider,
-              decoration: InputDecoration(
-                labelText: 'translationProvider'.tr,
-                border: const OutlineInputBorder(),
-              ),
-              items: [
-                DropdownMenuItem(
-                  value: 'openai_compatible',
-                  child: Text('openAICompatibleApi'.tr),
+            if (!GetPlatform.isAndroid) ...[
+              TextField(
+                controller: serviceUrlController,
+                decoration: InputDecoration(
+                  labelText: 'translationServiceUrl'.tr,
+                  border: const OutlineInputBorder(),
                 ),
-                DropdownMenuItem(
-                  value: 'nllb',
-                  child: Text('nllbLocal'.tr),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: apiTokenController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'translationApiToken'.tr,
+                  border: const OutlineInputBorder(),
                 ),
-                DropdownMenuItem(
-                  value: 'nllb_big',
-                  child: Text('nllbBigLocal'.tr),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                initialValue: translationProvider,
+                decoration: InputDecoration(
+                  labelText: 'translationProvider'.tr,
+                  border: const OutlineInputBorder(),
                 ),
-              ],
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() => translationProvider = value);
-                }
-              },
-            ),
+                items: [
+                  DropdownMenuItem(
+                    value: 'openai_compatible',
+                    child: Text('openAICompatibleApi'.tr),
+                  ),
+                  DropdownMenuItem(
+                    value: 'nllb',
+                    child: Text('nllbLocal'.tr),
+                  ),
+                  DropdownMenuItem(
+                    value: 'nllb_big',
+                    child: Text('nllbBigLocal'.tr),
+                  ),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() => translationProvider = value);
+                  }
+                },
+              ),
+            ] else ...[
+              Card(
+                margin: EdgeInsets.zero,
+                child: ListTile(
+                  leading: const Icon(Icons.phone_android),
+                  title: Text('androidNativeTranslation'.tr),
+                  subtitle: Text('androidNativeTranslationHint'.tr),
+                ),
+              ),
+            ],
             if (translationProvider == 'openai_compatible') ...[
               const SizedBox(height: 16),
               TextField(

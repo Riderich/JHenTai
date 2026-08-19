@@ -44,6 +44,11 @@ class zh_CN {
       'translationSettings': '翻译设置',
       'translationServiceHint':
           'JHenTai 会把当前页发送到本地翻译服务。服务负责文字检测、OCR、翻译、擦字修复和中文嵌字，再返回完整译图。',
+      'androidTranslationServiceHint':
+          '安卓端完全在手机上运行：内置日文 OCR 和图片排版，只把识别出的文字发送给你选择的 API，不需要电脑或本地服务。',
+      'androidNativeTranslation': '安卓独立翻译（实验版）',
+      'androidNativeTranslationHint':
+          '使用内置日文 OCR、手机端擦字与中文嵌字。当前版本需要 OpenAI 兼容翻译 API。',
       'translationRuntimeTitle': '本机翻译环境',
       'initializeTranslationRuntime': '初始化翻译环境',
       'startTranslationRuntime': '启动翻译服务',
@@ -54,9 +59,11 @@ class zh_CN {
       'translationRuntimeStarting': '正在启动翻译服务…',
       'translationRuntimeBundleMissing': '测试包不完整，缺少翻译引擎文件，请重新下载并完整解压',
       'translationRuntimeStartTimeout': '翻译服务启动超时，请点击重试',
-      'translationRuntimeSizeHint': '预计需要下载约 4–7 GB，请预留至少 12 GB 磁盘空间。已下载内容可断点复用。',
+      'translationRuntimeSizeHint':
+          '预计需要下载约 4–7 GB，请预留至少 12 GB 磁盘空间。已下载内容可断点复用。',
       'useCudaAcceleration': '使用 NVIDIA CUDA 加速',
-      'useCudaAccelerationHint': '已检测到 NVIDIA 显卡；将额外安装 CUDA 12.8 版 PyTorch，失败时自动回退 CPU。',
+      'useCudaAccelerationHint':
+          '已检测到 NVIDIA 显卡；将额外安装 CUDA 12.8 版 PyTorch，失败时自动回退 CPU。',
       'translationServiceUrl': '本地服务地址',
       'translationApiToken': '服务令牌（可选）',
       'translationProvider': '机器翻译方式',
@@ -64,7 +71,8 @@ class zh_CN {
       'nllbLocal': 'NLLB 600M 本地翻译（推荐低配）',
       'nllbBigLocal': 'NLLB 1.3B 本地翻译（推荐 CUDA）',
       'translationApiBaseUrl': 'API 服务地址',
-      'translationApiBaseUrlHint': '例如 https://api.deepseek.com 或本机 Ollama/兼容服务的 /v1 地址',
+      'translationApiBaseUrlHint':
+          '例如 https://api.deepseek.com 或本机 Ollama/兼容服务的 /v1 地址',
       'translationApiKey': 'API Key',
       'translationApiKeyHint': '仅保存在本机配置；本地免密服务可以留空',
       'translationApiModel': '模型名称',
@@ -77,8 +85,9 @@ class zh_CN {
       'translationTimeout': '请求超时',
       'saveTranslationSettings': '保存设置',
       'testConnection': '测试连接',
-      'translationServiceConnected': '翻译服务连接成功',
-      'translationServiceUnavailable': '无法连接翻译服务，请先启动服务并检查地址',
+      'translationServiceConnected': '翻译连接成功',
+      'translationApiKeyRequired': '使用 DeepSeek 时请先填写 API Key 并保存',
+      'translationServiceUnavailable': '无法连接翻译服务，请检查网络、API 地址、Key 和模型名称',
       'clearTranslationCache': '清除译图缓存',
       'translationCacheCleared': '译图缓存已清除',
       'translateCurrentPage': '翻译当前页',
@@ -91,7 +100,8 @@ class zh_CN {
       'translationRangeOrderError': '起始页不能大于结束页',
       'translatingPageRange': '正在翻译',
       'stopTranslationRange': '停止范围翻译',
-      'translationRangeCompleted': '范围翻译完成：已处理 @completed/@total 页，失败 @failed 页',
+      'translationRangeCompleted':
+          '范围翻译完成：已处理 @completed/@total 页，失败 @failed 页',
       'translationRangeStopped': '已停止：已处理 @completed/@total 页，失败 @failed 页',
       'showOriginalImage': '显示原图',
       'showTranslatedImage': '显示译图',

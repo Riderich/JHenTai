@@ -16,9 +16,11 @@ import io.flutter.plugins.GeneratedPluginRegistrant
 class MainActivity : FlutterFragmentActivity() {
     private var interceptVolumeEvent = false
     private lateinit var volumeMethodChannel: MethodChannel
+    private var imageTranslationChannel: ImageTranslationChannel? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine)
+        imageTranslationChannel = ImageTranslationChannel(flutterEngine)
 
         volumeMethodChannel = MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
@@ -70,6 +72,8 @@ class MainActivity : FlutterFragmentActivity() {
 
     override fun onDestroy() {
         volumeMethodChannel.setMethodCallHandler(null)
+        imageTranslationChannel?.dispose()
+        imageTranslationChannel = null
         super.onDestroy()
     }
 }

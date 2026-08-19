@@ -217,6 +217,7 @@ abstract class BaseLayoutLogic extends GetxController
       context: context,
       builder: (_) => CupertinoActionSheet(
         actions: <CupertinoActionSheetAction>[
+          ..._translationMobileActions(index),
           CupertinoActionSheetAction(
             child: ehActionSheetText('reload'.tr),
             onPressed: () {
@@ -324,6 +325,7 @@ abstract class BaseLayoutLogic extends GetxController
       context: context,
       builder: (_) => CupertinoActionSheet(
         actions: [
+          ..._translationMobileActions(index),
           CupertinoActionSheetAction(
             child: ehActionSheetText('share'.tr),
             onPressed: () {
@@ -377,6 +379,7 @@ abstract class BaseLayoutLogic extends GetxController
       context: context,
       builder: (_) => CupertinoActionSheet(
         actions: [
+          ..._translationMobileActions(index),
           CupertinoActionSheetAction(
             child: ehActionSheetText('share'.tr),
             onPressed: () {
@@ -541,6 +544,42 @@ abstract class BaseLayoutLogic extends GetxController
                   ? 'showOriginalImage'.tr
                   : 'showTranslatedImage'.tr),
             ],
+          ),
+        ),
+    ];
+  }
+
+  List<CupertinoActionSheetAction> _translationMobileActions(int index) {
+    final ImageTranslationEntry entry =
+        imageTranslationService.entry(readPageState.readPageInfo, index);
+    return [
+      CupertinoActionSheetAction(
+        onPressed: () async {
+          if (entry.status == ImageTranslationStatus.translating) {
+            backRoute();
+            return;
+          }
+          backRoute();
+          await readPageLogic.translatePageAtIndex(index);
+        },
+        child: ehActionSheetText(
+          entry.status == ImageTranslationStatus.translating
+              ? 'translatingCurrentPage'.tr
+              : entry.status == ImageTranslationStatus.success
+                  ? 'retranslateCurrentPage'.tr
+                  : 'translateCurrentPage'.tr,
+        ),
+      ),
+      if (entry.status == ImageTranslationStatus.success)
+        CupertinoActionSheetAction(
+          onPressed: () {
+            backRoute();
+            readPageLogic.toggleTranslatedImages();
+          },
+          child: ehActionSheetText(
+            readPageState.showTranslatedImages
+                ? 'showOriginalImage'.tr
+                : 'showTranslatedImage'.tr,
           ),
         ),
     ];
